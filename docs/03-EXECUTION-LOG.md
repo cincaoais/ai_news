@@ -88,3 +88,20 @@ step needs no shell; the Routine path gets shell from RUNBOOK anyway); (4) 200-c
 CLAUDE.md under Slice 2's 300-char validator ceiling is intentional layering.
 Correction to its report: tests/fixtures/mock_selection.json is NOT an orphan — commander
 authored it; digest.yml's mock path references it.
+
+### 2026-07-31 (afternoon) — Checkpoints A+B complete; FIRST REAL DIGEST DELIVERED
+User completed: BotFather bot + /start; .env token paste (commander added .env support,
+commit d17042a — .env loader with placeholder guard, 139 tests); private repo
+git@github.com:cincaoais/ai_news.git + remote + branch renamed main by user;
+CLAUDE_CODE_OAUTH_TOKEN + TELEGRAM_* pasted as repo Actions secrets.
+Commander then: fetched chat_id (2054212955) via get_chat_id.py; live test message
+delivered; pushed full history to origin/main (SSH keys pre-existing); ran FULL live
+pipeline `python scripts/run_digest.py` → exit 0, VERIFIED by artifacts: work/sent.json
+present, state/seen.jsonl 8 entries, last_digest.md correct front-matter+headlines,
+state commit 77014c1 "[skip ci]" pushed (origin/main == HEAD).
+This closes: Slice 2's deferred live-send acceptance, Slice 3's dev-machine end-to-end,
+DoD item "Live end-to-end on dev machine: real digest, real send".
+Same-day guard now armed for finance_metals/2026-07-31 — Slice 5's live Routine test
+today must use a different profile (sports), which also demos DoD profile-switching.
+Pending user clicks: on-GitHub mock dispatch (Test 1) + real-auth dry-run dispatch
+(Test 2 = soak T0). Next: Slice 5 Routine creation.
