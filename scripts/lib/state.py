@@ -1,13 +1,21 @@
-"""Seen-URL state: canonicalization + load/append of state/seen.jsonl."""
+"""Seen-URL state: canonicalization + load/append of state/seen.jsonl, plus
+state/last_digest.md front-matter read/write (soft-dedup input for Claude
+and the same-day guard's date/profile source)."""
 
 from __future__ import annotations
 
 import json
 import logging
+import re
 from pathlib import Path
+from typing import Optional
 from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
 
+import yaml
+
 logger = logging.getLogger(__name__)
+
+_FRONT_MATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n?", re.DOTALL)
 
 
 def canonicalize_url(url: str) -> str:
@@ -64,3 +72,47 @@ def bootstrap_state_dir(state_dir: Path) -> None:
     seen_path = state_dir / "seen.jsonl"
     if not seen_path.exists():
         seen_path.touch()
+
+
+def read_last_digest_front_matter(path: Path) -> Optional[dict]:
+    """Parse state/last_digest.md's YAML front-matter, returning
+    {"date": ..., "profile": ...} (or None if the file doesn't exist yet --
+    first run -- or has no parseable front-matter)."""
+    if not path.exists():
+        return None
+
+    text = path.read_text(encoding="utf-8")
+    match = _FRONT_MATTER_RE.match(text)
+    if not match:
+        return None
+
+    try:
+        meta = yaml.safe_load(match.group(1))
+    except yaml.YAMLError:
+        logger.warning("could not parse front-matter of %s; treating as absent", path)
+        return None
+
+    return meta if isinstance(meta, dict) else None
+
+
+def write_last_digest(path: Path, *, date: str, profile: str, headlines: list[str]) -> None:
+    """Rewrite state/last_digest.md: YAML front-matter (date + profile) the
+    same-day guard reads, followed by the sent headlines list -- this body
+    is what Claude reads for soft (semantic, not just URL) dedup."""
+    # Quote the date explicitly -- unquoted "date: 2026-07-31" is valid
+    # YAML for an implicit date/timestamp scalar, so yaml.safe_load would
+    # hand back a datetime.date object instead of the str every caller
+    # (the same-day guard, tests) expects.
+    lines = [
+        "---",
+        f'date: "{date}"',
+        f"profile: {profile}",
+        "---",
+        "",
+        f"# Digest {date} ({profile})",
+        "",
+    ]
+    lines.extend(f"- {headline}" for headline in headlines)
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")

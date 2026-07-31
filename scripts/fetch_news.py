@@ -21,7 +21,7 @@ from typing import Optional
 
 import yaml
 
-from lib import feeds, market, state
+from lib import dates, feeds, market, state
 from lib.feeds import FeedItem
 
 logger = logging.getLogger(__name__)
@@ -158,7 +158,11 @@ def build_candidates_payload(
 
     return {
         "profile": profile_name,
-        "date": now.date().isoformat(),
+        # MYT (Asia/Kuala_Lumpur), not the host's UTC date -- the GH Actions
+        # fallback cron fires 23:47 UTC = 07:47 MYT the *next* day, so a
+        # naive UTC date here would silently break the same-day guard
+        # (see lib/dates.py and docs/03-EXECUTION-LOG.md's Slice 1 follow-up).
+        "date": dates.today_myt(now),
         "thin_news": thin_news,
         "market": market_block,
         "items": [

@@ -133,6 +133,23 @@ def test_build_candidates_payload_shape_and_ordering(monkeypatch):
     assert first["source"] == "Src B"
 
 
+def test_build_candidates_payload_date_uses_myt_not_host_utc(monkeypatch):
+    # 23:47 UTC on 2026-07-30 is 07:47 MYT on 2026-07-31 (UTC+8) -- exactly
+    # the GH Actions fallback-cron scenario lib/dates.py's MYT helper
+    # exists for. A naive UTC date here would wrongly read "2026-07-30" and
+    # silently break the same-day duplicate-send guard.
+    near_midnight_utc = datetime(2026, 7, 30, 23, 47, 0, tzinfo=timezone.utc)
+    items = [_item("A", "https://example.com/a", 1)]
+    monkeypatch.setattr(fetch_news, "gather_raw_items", lambda profile, now=None: items)
+
+    config = {"lookback_hours": 24, "min_items": 1, "max_items": 8}
+    payload = fetch_news.build_candidates_payload(
+        "finance_metals", _fake_profile(market_enabled=False), config, seen=set(),
+        now=near_midnight_utc, fetch_market=False,
+    )
+    assert payload["date"] == "2026-07-31"
+
+
 def test_build_candidates_payload_caps_at_40(monkeypatch):
     items = [_item(f"Item {i}", f"https://example.com/{i}", i * 0.1) for i in range(60)]
     monkeypatch.setattr(fetch_news, "gather_raw_items", lambda profile, now=None: items)
