@@ -110,6 +110,7 @@ def fetch_feed_items(
     timeout: int = REQUEST_TIMEOUT_SECONDS,
     stale_hours: int = STALE_FEED_HOURS,
     now: Optional[datetime] = None,
+    warnings_out: Optional[list[str]] = None,
 ) -> list[FeedItem]:
     """Fetch and parse one feed, applying the per-feed freshness check.
 
@@ -120,11 +121,19 @@ def fetch_feed_items(
     Returns an empty list -- logging a warning, never raising -- for: dead
     feeds (network/parse error), feeds with no usable entries, and stale
     feeds (newest entry older than stale_hours).
+
+    `warnings_out`, if given, gets one "<label>: dead" or "<label>: stale"
+    string appended whenever this feed is skipped. fetch_news.py collects
+    these across every feed + gnews_fallback query into candidates.json's
+    `feed_warnings` list, which build_and_send.py surfaces as a one-line
+    digest footer (Slice 6). A healthy feed appends nothing.
     """
     now = now or datetime.now(timezone.utc)
 
     text = fetch_feed_text(url, timeout=timeout)
     if text is None:
+        if warnings_out is not None:
+            warnings_out.append(f"{label}: dead")
         return []
 
     parsed = feedparser.parse(text)
@@ -133,6 +142,8 @@ def fetch_feed_items(
     if not entries:
         reason = getattr(parsed, "bozo_exception", None)
         logger.warning("dead feed (no usable entries), skipping %s (%s): %s", label, url, reason)
+        if warnings_out is not None:
+            warnings_out.append(f"{label}: dead")
         return []
 
     newest_dt: Optional[datetime] = None
@@ -143,6 +154,8 @@ def fetch_feed_items(
 
     if newest_dt is None:
         logger.warning("feed %s (%s) has no parseable entry dates; skipping", label, url)
+        if warnings_out is not None:
+            warnings_out.append(f"{label}: dead")
         return []
 
     age = now - newest_dt
@@ -151,6 +164,8 @@ def fetch_feed_items(
             "STALE feed skipped: %s (%s) newest entry is %.1fh old (> %dh)",
             label, url, age.total_seconds() / 3600, stale_hours,
         )
+        if warnings_out is not None:
+            warnings_out.append(f"{label}: stale")
         return []
 
     items: list[FeedItem] = []

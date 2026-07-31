@@ -84,6 +84,11 @@ def test_main_no_chats_yet_prints_helpful_hint(monkeypatch, capsys):
 
 def test_main_missing_token_errors_without_calling_the_api(monkeypatch, capsys):
     monkeypatch.delenv("TELEGRAM_BOT_TOKEN", raising=False)
+    # main() calls load_dotenv() itself -- on a dev machine with a real
+    # (gitignored) .env populated (post Checkpoint A), that would silently
+    # re-populate the var we just deleted. Neutralize it so this test
+    # exercises the "no token anywhere" path regardless of local .env state.
+    monkeypatch.setattr(get_chat_id, "load_dotenv", lambda path=None: 0)
 
     def _should_not_be_called(token, timeout=15):
         raise AssertionError("fetch_updates should not be called without a token")

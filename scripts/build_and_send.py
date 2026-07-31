@@ -188,9 +188,27 @@ def build_item_block(item: dict) -> str:
     return f'<b><a href="{url}">{title}</a></b>\n{summary}'
 
 
+def build_feed_warnings_footer(candidates: dict) -> Optional[str]:
+    """Optional one-line digest footer noting how many source feeds were
+    skipped (stale or dead) during this run's fetch step (Slice 6). Reads
+    candidates.json's `feed_warnings` list (see lib/feeds.py's
+    `warnings_out` and fetch_news.py's gather_raw_items); returns None when
+    every feed was healthy (the common case), so nothing is appended on a
+    normal day. Deliberately never echoes the individual warning strings
+    (which carry a feed label, not model text) into the footer itself --
+    just a count -- so this line is trivially valid, single-line HTML."""
+    feed_warnings = candidates.get("feed_warnings") or []
+    if not feed_warnings:
+        return None
+    return f"<i>note: {len(feed_warnings)} source feeds skipped (details in repo logs)</i>"
+
+
 def build_digest_blocks(candidates: dict, validated_items: list[dict], today: str) -> list[str]:
     blocks = [build_header_block(candidates, today)]
     blocks.extend(build_item_block(item) for item in validated_items)
+    footer = build_feed_warnings_footer(candidates)
+    if footer:
+        blocks.append(footer)
     return blocks
 
 

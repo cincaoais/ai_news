@@ -52,26 +52,47 @@ def load_profile(profile_name: str, profiles_dir: Path = PROFILES_DIR) -> dict:
         return yaml.safe_load(f)
 
 
-def gather_raw_items(profile: dict, *, now: Optional[datetime] = None) -> list[FeedItem]:
+def gnews_locale_kwargs(profile: dict) -> dict:
+    """Per-profile Google News RSS locale override (Slice 1 follow-up,
+    delivered in Slice 6). A profile may set an optional `gnews_locale:
+    {hl, gl, ceid}` field (only malaysia_politics.yaml does); any subset of
+    those three keys is honored. Absent (or no matching keys) -> an empty
+    dict, so google_news_rss_url() falls back to its own en-US/US/US:en
+    defaults untouched."""
+    locale = profile.get("gnews_locale") or {}
+    return {k: v for k, v in locale.items() if k in ("hl", "gl", "ceid")}
+
+
+def gather_raw_items(
+    profile: dict, *, now: Optional[datetime] = None
+) -> tuple[list[FeedItem], list[str]]:
     """Fetch every feed and gnews_fallback query for a profile.
 
-    Returns the union of items across all sources, freshness-checked per
-    feed but NOT yet lookback-filtered. Dead/stale individual feeds are
+    Returns (items, feed_warnings): the union of items across all sources,
+    freshness-checked per feed but NOT yet lookback-filtered, plus a
+    "<label>: dead"/"<label>: stale" string for every feed skipped along the
+    way (see lib/feeds.py's `warnings_out`). Dead/stale individual feeds are
     skipped (logged) -- this function itself never raises.
     """
     now = now or datetime.now(timezone.utc)
     items: list[FeedItem] = []
+    feed_warnings: list[str] = []
 
     for feed in profile.get("feeds", []) or []:
         label = feed.get("label") or feed.get("url", "unknown feed")
         url = feed["url"]
-        items.extend(feeds.fetch_feed_items(label, url, now=now))
+        items.extend(feeds.fetch_feed_items(label, url, now=now, warnings_out=feed_warnings))
 
+    locale_kwargs = gnews_locale_kwargs(profile)
     for query in profile.get("gnews_fallback", []) or []:
-        url = feeds.google_news_rss_url(query)
-        items.extend(feeds.fetch_feed_items(f"Google News: {query}", url, now=now))
+        url = feeds.google_news_rss_url(query, **locale_kwargs)
+        items.extend(
+            feeds.fetch_feed_items(
+                f"Google News: {query}", url, now=now, warnings_out=feed_warnings
+            )
+        )
 
-    return items
+    return items, feed_warnings
 
 
 def canonicalize_and_dedupe(items: list[FeedItem], seen: set[str]) -> list[FeedItem]:
@@ -138,7 +159,7 @@ def build_candidates_payload(
 ) -> dict:
     now = now or datetime.now(timezone.utc)
 
-    raw_items = gather_raw_items(profile, now=now)
+    raw_items, feed_warnings = gather_raw_items(profile, now=now)
     deduped = canonicalize_and_dedupe(raw_items, seen)
 
     lookback_hours = config["lookback_hours"]
@@ -164,6 +185,7 @@ def build_candidates_payload(
         # (see lib/dates.py and docs/03-EXECUTION-LOG.md's Slice 1 follow-up).
         "date": dates.today_myt(now),
         "thin_news": thin_news,
+        "feed_warnings": feed_warnings,
         "market": market_block,
         "items": [
             {

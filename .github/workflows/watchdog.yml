@@ -1,0 +1,89 @@
+name: State watchdog
+
+# This workflow is the TELEGRAM-INDEPENDENT second alert channel
+# (docs/02-PLAN.md, Slice 6). It sends nothing itself and needs NO SECRETS
+# AT ALL -- it relies entirely on a GitHub platform behavior: a SCHEDULED
+# workflow run that fails triggers GitHub's own native "workflow run
+# failed" notification e-mail to the repo owner. That e-mail IS the alert.
+# There is no notification code of ours to maintain here, and nothing in
+# this workflow can itself go silently dark the way an in-pipeline Telegram
+# call could.
+#
+# What it checks: the timestamp of the most recent commit that touched
+# state/ (`git log -1 --format=%ct -- state/`). state/ is rewritten by
+# scripts/update_state.py at the end of every successful daily run --
+# Routine or Actions fallback alike -- and pushed back to this repo. So
+# "state/ hasn't moved in a long time" is a reliable, scheduler-agnostic
+# proxy for "the daily pipeline hasn't completed successfully in a long
+# time," independent of which scheduler was even supposed to run it.
+#
+# Failure classes this catches that scripts/notify_failure.py CANNOT (see
+# README.md's "Failure handling & alert channels" section for the full
+# picture):
+#   1. Routine never ran at all -- paused, deleted, platform outage, or a
+#      usage-limit hit before the session could even start. No in-pipeline
+#      code ever executed, so there was never a chance to call
+#      notify_failure.py in the first place.
+#   2. Telegram credentials are dead -- bot token revoked, the user blocked
+#      the bot, or the Telegram API rejects auth. The pipeline can run and
+#      even reach the send step, but notify_failure.py's OWN alert path
+#      also goes through Telegram -- a dead-credentials failure is
+#      invisible on that channel BY CONSTRUCTION. This workflow needing no
+#      Telegram credentials at all is exactly what closes that gap.
+#   3. The state/ push is broken -- git auth stopped working, branch
+#      protection changed, or some other push-time failure. A digest may
+#      even have been sent, but the commit that would prove the pipeline
+#      completed never lands, so the next scheduled run repeats candidates
+#      and this watchdog (correctly) still goes red.
+#
+# Threshold: 26 hours, not 24 -- one-plus hour of slack for the daily
+# schedule's observed stagger (~08:06 MYT actual delivery vs. 08:00 MYT
+# nominal Routine time; see docs/03-EXECUTION-LOG.md) plus a safety margin,
+# so a normal day's ~24h gap between digests never false-positives this
+# workflow red.
+
+on:
+  schedule:
+    # "37 2 * * *" (UTC) = 10:37 MYT (UTC+8) -- off-hour minute (not
+    # top-of-hour, matching digest.yml's cron-drift rationale), and well
+    # after the ~08:06 MYT daily digest so a normal day never trips this.
+    - cron: "37 2 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  watchdog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check state/ freshness
+        run: |
+          set -eu
+
+          LAST_COMMIT_TS="$(git log -1 --format=%ct -- state/ || true)"
+
+          if [ -z "$LAST_COMMIT_TS" ]; then
+            echo "::error::No commit has ever touched state/ in this repo -- the daily digest pipeline has never completed a run."
+            exit 1
+          fi
+
+          NOW_TS="$(date -u +%s)"
+          AGE_SECONDS=$(( NOW_TS - LAST_COMMIT_TS ))
+          AGE_HOURS=$(( AGE_SECONDS / 3600 ))
+          THRESHOLD_HOURS=26
+
+          echo "Most recent state/ commit is ${AGE_HOURS}h old (threshold: ${THRESHOLD_HOURS}h)."
+
+          if [ "$AGE_HOURS" -ge "$THRESHOLD_HOURS" ]; then
+            echo "::error::state/ has not been updated in ${AGE_HOURS}h (>= ${THRESHOLD_HOURS}h threshold). The daily digest pipeline appears to have stopped completing. Check, in order: (1) the Routine's run list at claude.ai/code/routines, (2) Telegram bot/chat credentials (TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID), (3) recent runs of .github/workflows/digest.yml, (4) /status for Claude usage-limit exhaustion. See README.md's 'no digest by 9 AM MYT' checklist for the full runbook."
+            exit 1
+          fi
+
+          echo "OK: state/ is fresh."

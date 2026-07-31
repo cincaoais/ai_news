@@ -92,6 +92,109 @@ def test_thin_news_policy_no_widen_when_min_items_met():
 
 
 # ---------------------------------------------------------------------------
+# gather_raw_items: feed_warnings collection (Slice 6 feed-health footer)
+# ---------------------------------------------------------------------------
+
+def test_gather_raw_items_collects_feed_warnings_from_skipped_feeds(monkeypatch):
+    profile = {
+        "feeds": [
+            {"label": "Good Feed", "url": "https://good.example.com/rss"},
+            {"label": "Dead Feed", "url": "https://dead.example.com/rss"},
+            {"label": "Stale Feed", "url": "https://stale.example.com/rss"},
+        ],
+        "gnews_fallback": [],
+    }
+
+    def fake_fetch_feed_items(label, url, *, now=None, warnings_out=None, **kwargs):
+        if label == "Dead Feed":
+            if warnings_out is not None:
+                warnings_out.append(f"{label}: dead")
+            return []
+        if label == "Stale Feed":
+            if warnings_out is not None:
+                warnings_out.append(f"{label}: stale")
+            return []
+        return [_item("Good headline", "https://good.example.com/a", 1)]
+
+    monkeypatch.setattr(fetch_news.feeds, "fetch_feed_items", fake_fetch_feed_items)
+
+    items, feed_warnings = fetch_news.gather_raw_items(profile, now=NOW)
+
+    assert [i.title for i in items] == ["Good headline"]
+    assert feed_warnings == ["Dead Feed: dead", "Stale Feed: stale"]
+
+
+def test_gather_raw_items_no_warnings_when_all_feeds_healthy(monkeypatch):
+    profile = {
+        "feeds": [{"label": "Good Feed", "url": "https://good.example.com/rss"}],
+        "gnews_fallback": [],
+    }
+
+    def fake_fetch_feed_items(label, url, *, now=None, warnings_out=None, **kwargs):
+        return [_item("Good headline", "https://good.example.com/a", 1)]
+
+    monkeypatch.setattr(fetch_news.feeds, "fetch_feed_items", fake_fetch_feed_items)
+
+    items, feed_warnings = fetch_news.gather_raw_items(profile, now=NOW)
+
+    assert feed_warnings == []
+
+
+# ---------------------------------------------------------------------------
+# gnews_locale_kwargs / per-profile Google News locale (Slice 1 follow-up)
+# ---------------------------------------------------------------------------
+
+def test_gnews_locale_kwargs_absent_field_returns_empty_dict():
+    profile = {"name": "finance_metals"}
+    assert fetch_news.gnews_locale_kwargs(profile) == {}
+
+
+def test_gnews_locale_kwargs_honors_explicit_profile_locale():
+    profile = {"gnews_locale": {"hl": "en-MY", "gl": "MY", "ceid": "MY:en"}}
+    assert fetch_news.gnews_locale_kwargs(profile) == {"hl": "en-MY", "gl": "MY", "ceid": "MY:en"}
+
+
+def test_gather_raw_items_uses_profile_gnews_locale_for_query_urls(monkeypatch):
+    profile = {
+        "feeds": [],
+        "gnews_fallback": ["Malaysia politics when:1d"],
+        "gnews_locale": {"hl": "en-MY", "gl": "MY", "ceid": "MY:en"},
+    }
+    urls_called = []
+
+    def fake_fetch_feed_items(label, url, *, now=None, warnings_out=None, **kwargs):
+        urls_called.append(url)
+        return []
+
+    monkeypatch.setattr(fetch_news.feeds, "fetch_feed_items", fake_fetch_feed_items)
+
+    fetch_news.gather_raw_items(profile, now=NOW)
+
+    assert len(urls_called) == 1
+    assert "hl=en-MY" in urls_called[0]
+    assert "gl=MY" in urls_called[0]
+    assert "ceid=MY%3Aen" in urls_called[0]
+
+
+def test_gather_raw_items_defaults_gnews_locale_when_profile_omits_it(monkeypatch):
+    profile = {"feeds": [], "gnews_fallback": ["S&P 500 when:1d"]}
+    urls_called = []
+
+    def fake_fetch_feed_items(label, url, *, now=None, warnings_out=None, **kwargs):
+        urls_called.append(url)
+        return []
+
+    monkeypatch.setattr(fetch_news.feeds, "fetch_feed_items", fake_fetch_feed_items)
+
+    fetch_news.gather_raw_items(profile, now=NOW)
+
+    assert len(urls_called) == 1
+    assert "hl=en-US" in urls_called[0]
+    assert "gl=US" in urls_called[0]
+    assert "ceid=US%3Aen" in urls_called[0]
+
+
+# ---------------------------------------------------------------------------
 # build_candidates_payload
 # ---------------------------------------------------------------------------
 
@@ -110,7 +213,7 @@ def test_build_candidates_payload_shape_and_ordering(monkeypatch):
         _item("Newest", "https://example.com/new", 1, source="Src B"),
         _item("Middle", "https://example.com/mid", 3, source="Src C"),
     ]
-    monkeypatch.setattr(fetch_news, "gather_raw_items", lambda profile, now=None: items)
+    monkeypatch.setattr(fetch_news, "gather_raw_items", lambda profile, now=None: (items, []))
 
     config = {"lookback_hours": 24, "min_items": 2, "max_items": 8}
     payload = fetch_news.build_candidates_payload(
@@ -121,6 +224,7 @@ def test_build_candidates_payload_shape_and_ordering(monkeypatch):
     assert payload["date"] == "2026-07-31"
     assert payload["thin_news"] is False
     assert payload["market"] is None
+    assert payload["feed_warnings"] == []
 
     titles_in_order = [item["title"] for item in payload["items"]]
     assert titles_in_order == ["Newest", "Middle", "Oldest"]  # newest first
@@ -140,7 +244,7 @@ def test_build_candidates_payload_date_uses_myt_not_host_utc(monkeypatch):
     # silently break the same-day duplicate-send guard.
     near_midnight_utc = datetime(2026, 7, 30, 23, 47, 0, tzinfo=timezone.utc)
     items = [_item("A", "https://example.com/a", 1)]
-    monkeypatch.setattr(fetch_news, "gather_raw_items", lambda profile, now=None: items)
+    monkeypatch.setattr(fetch_news, "gather_raw_items", lambda profile, now=None: (items, []))
 
     config = {"lookback_hours": 24, "min_items": 1, "max_items": 8}
     payload = fetch_news.build_candidates_payload(
@@ -152,7 +256,7 @@ def test_build_candidates_payload_date_uses_myt_not_host_utc(monkeypatch):
 
 def test_build_candidates_payload_caps_at_40(monkeypatch):
     items = [_item(f"Item {i}", f"https://example.com/{i}", i * 0.1) for i in range(60)]
-    monkeypatch.setattr(fetch_news, "gather_raw_items", lambda profile, now=None: items)
+    monkeypatch.setattr(fetch_news, "gather_raw_items", lambda profile, now=None: (items, []))
 
     config = {"lookback_hours": 24, "min_items": 2, "max_items": 8}
     payload = fetch_news.build_candidates_payload(
@@ -163,7 +267,7 @@ def test_build_candidates_payload_caps_at_40(monkeypatch):
 
 def test_build_candidates_payload_includes_market_when_enabled(monkeypatch):
     items = [_item("A", "https://example.com/a", 1)]
-    monkeypatch.setattr(fetch_news, "gather_raw_items", lambda profile, now=None: items)
+    monkeypatch.setattr(fetch_news, "gather_raw_items", lambda profile, now=None: (items, []))
     fake_snapshot = {"^GSPC": {"symbol": "^GSPC", "price": 5000.0}}
     import lib.market as market_mod
     monkeypatch.setattr(market_mod, "fetch_market_snapshot", lambda symbols, timeout=10: fake_snapshot)
@@ -175,8 +279,21 @@ def test_build_candidates_payload_includes_market_when_enabled(monkeypatch):
     assert payload["market"] == fake_snapshot
 
 
+def test_build_candidates_payload_carries_feed_warnings_through(monkeypatch):
+    items = [_item("A", "https://example.com/a", 1)]
+    monkeypatch.setattr(
+        fetch_news, "gather_raw_items", lambda profile, now=None: (items, ["Dead Feed: dead"])
+    )
+
+    config = {"lookback_hours": 24, "min_items": 1, "max_items": 8}
+    payload = fetch_news.build_candidates_payload(
+        "finance_metals", _fake_profile(market_enabled=False), config, seen=set(), now=NOW, fetch_market=False
+    )
+    assert payload["feed_warnings"] == ["Dead Feed: dead"]
+
+
 def test_build_candidates_payload_raises_on_zero_candidates(monkeypatch):
-    monkeypatch.setattr(fetch_news, "gather_raw_items", lambda profile, now=None: [])
+    monkeypatch.setattr(fetch_news, "gather_raw_items", lambda profile, now=None: ([], []))
 
     config = {"lookback_hours": 24, "min_items": 5, "max_items": 8}
     with pytest.raises(fetch_news.NoCandidatesError):

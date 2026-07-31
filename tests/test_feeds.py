@@ -124,3 +124,75 @@ def test_google_news_rss_url_encodes_query():
     assert "hl=en-US" in url
     assert "gl=US" in url
     assert "ceid=US%3Aen" in url
+
+
+def test_google_news_rss_url_honors_explicit_locale_override():
+    url = feeds.google_news_rss_url("Malaysia politics when:1d", hl="en-MY", gl="MY", ceid="MY:en")
+    assert "hl=en-MY" in url
+    assert "gl=MY" in url
+    assert "ceid=MY%3Aen" in url
+
+
+# ---------------------------------------------------------------------------
+# warnings_out (Slice 6 feed-health footer)
+# ---------------------------------------------------------------------------
+
+def test_fetch_feed_items_records_dead_warning_on_network_error(monkeypatch):
+    _mock_get(monkeypatch, exc=requests.ConnectionError("boom"))
+
+    warnings: list[str] = []
+    items = feeds.fetch_feed_items(
+        "My Feed", "https://dead.example.com/rss", now=NOW, warnings_out=warnings
+    )
+
+    assert items == []
+    assert warnings == ["My Feed: dead"]
+
+
+def test_fetch_feed_items_records_dead_warning_on_no_usable_entries(monkeypatch, fixtures_dir):
+    text = (fixtures_dir / "malformed_feed.xml").read_text(encoding="utf-8")
+    _mock_get(monkeypatch, response=FakeResponse(text=text))
+
+    warnings: list[str] = []
+    items = feeds.fetch_feed_items(
+        "Malformed Fixture", "https://bad.example.com/rss", now=NOW, warnings_out=warnings
+    )
+
+    assert items == []
+    assert warnings == ["Malformed Fixture: dead"]
+
+
+def test_fetch_feed_items_records_stale_warning(monkeypatch, fixtures_dir):
+    text = (fixtures_dir / "stale_feed.xml").read_text(encoding="utf-8")
+    _mock_get(monkeypatch, response=FakeResponse(text=text))
+
+    warnings: list[str] = []
+    items = feeds.fetch_feed_items(
+        "Stale Fixture", "https://stale.example.com/rss", now=NOW, warnings_out=warnings
+    )
+
+    assert items == []
+    assert warnings == ["Stale Fixture: stale"]
+
+
+def test_fetch_feed_items_no_warning_when_healthy(monkeypatch, fixtures_dir):
+    text = (fixtures_dir / "fresh_feed.xml").read_text(encoding="utf-8")
+    _mock_get(monkeypatch, response=FakeResponse(text=text))
+
+    warnings: list[str] = []
+    items = feeds.fetch_feed_items(
+        "Fixture Feed", "https://example.com/rss", now=NOW, warnings_out=warnings
+    )
+
+    assert len(items) == 3
+    assert warnings == []
+
+
+def test_fetch_feed_items_warnings_out_defaults_to_none_safely(monkeypatch, fixtures_dir):
+    text = (fixtures_dir / "stale_feed.xml").read_text(encoding="utf-8")
+    _mock_get(monkeypatch, response=FakeResponse(text=text))
+
+    # No warnings_out passed at all -- must not crash (every existing caller
+    # of fetch_feed_items before Slice 6 omits this argument).
+    items = feeds.fetch_feed_items("Stale Fixture", "https://stale.example.com/rss", now=NOW)
+    assert items == []

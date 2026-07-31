@@ -35,6 +35,12 @@ def test_send_plain_text_has_no_parse_mode_key(monkeypatch):
 def test_main_missing_env_vars_swallows_and_exits_zero(monkeypatch, capsys):
     monkeypatch.delenv("TELEGRAM_BOT_TOKEN", raising=False)
     monkeypatch.delenv("TELEGRAM_CHAT_ID", raising=False)
+    # main() calls load_dotenv() itself -- on a dev machine with a real
+    # (gitignored) .env populated (post Checkpoint A), that would silently
+    # re-populate the vars we just deleted. Neutralize it so this test
+    # exercises the "no credentials anywhere" path regardless of local .env
+    # state.
+    monkeypatch.setattr(notify_failure, "load_dotenv", lambda path=None: 0)
 
     exit_code = notify_failure.main(["fetch_news: all feeds down"])
 

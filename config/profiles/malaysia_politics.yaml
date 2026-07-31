@@ -11,6 +11,7 @@ gnews_fallback:
   - "world politics when:1d"
   - "geopolitics when:1d"
   - "Malaysia politics when:1d"
+gnews_locale: {hl: "en-MY", gl: "MY", ceid: "MY:en"}   # Slice 6: MY-scoped Google News results for this profile
 market_snapshot:
   enabled: false
   symbols: []
