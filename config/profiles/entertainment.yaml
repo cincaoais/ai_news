@@ -1,0 +1,14 @@
+name: entertainment
+description: Entertainment and Hollywood/global media news
+language: en
+feeds:
+  - {label: Variety, url: "https://variety.com/feed/"}
+  - {label: Deadline, url: "https://deadline.com/feed/"}
+  - {label: Hollywood Reporter, url: "https://www.hollywoodreporter.com/feed/"}
+gnews_fallback:
+  - "Malaysia entertainment when:1d"
+market_snapshot:
+  enabled: false
+  symbols: []
+editorial_focus: >
+  Entertainment and Hollywood/global media news of broad interest.

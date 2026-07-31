@@ -1,0 +1,14 @@
+name: sports
+description: Sports news, global and Malaysia
+language: en
+feeds:
+  - {label: BBC Sport, url: "http://feeds.bbci.co.uk/sport/rss.xml"}
+  - {label: BBC Football, url: "http://feeds.bbci.co.uk/sport/football/rss.xml"}
+  - {label: FMT Sports, url: "https://www.freemalaysiatoday.com/category/sports/feed/"}
+gnews_fallback:
+  - "Malaysia sports when:1d"
+market_snapshot:
+  enabled: false
+  symbols: []
+editorial_focus: >
+  Global and Malaysia sports headlines that matter to a casual fan.

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+  <title>Fixture Fresh Feed</title>
+  <link>https://example.com/</link>
+  <description>A feed with a mix of in-lookback, out-of-lookback and old items</description>
+  <item>
+    <title>Fresh Item A</title>
+    <link>https://example.com/articles/fresh-item-a?utm_source=twitter&amp;utm_medium=social</link>
+    <description>&lt;p&gt;This is the &lt;b&gt;summary&lt;/b&gt; for fresh item A, with some &lt;i&gt;HTML&lt;/i&gt; in it.&lt;/p&gt;</description>
+    <pubDate>Fri, 31 Jul 2026 10:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Fresh Item B</title>
+    <link>https://example.com/articles/fresh-item-b</link>
+    <description>Plain-text summary for fresh item B, no HTML here.</description>
+    <pubDate>Thu, 30 Jul 2026 20:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Old Item C (outside lookback)</title>
+    <link>https://example.com/articles/old-item-c</link>
+    <description>This item is older than the lookback window but newer than the stale threshold.</description>
+    <pubDate>Tue, 28 Jul 2026 12:00:00 GMT</pubDate>
+  </item>
+</channel>
+</rss>

@@ -1,0 +1,17 @@
+name: finance_metals            # must match filename
+description: US stocks, gold/metals, global macro that moves markets
+language: en
+feeds:                          # each: url + human label; ALL optional at runtime
+  - {label: CNBC Top News,   url: "https://www.cnbc.com/id/100003114/device/rss/rss.html"}
+  - {label: CNBC Markets,    url: "https://www.cnbc.com/id/20910258/device/rss/rss.html"}
+  - {label: Yahoo Finance,   url: "https://finance.yahoo.com/news/rssindex"}
+  - {label: Investing.com Metals, url: "https://www.investing.com/rss/commodities_Metals.rss"}
+gnews_fallback:                 # Google News RSS pseudo-search; when:1d is REQUIRED
+  - "S&P 500 when:1d"
+  - "Federal Reserve when:1d"
+  - "gold price when:1d"
+market_snapshot:
+  enabled: true
+  symbols: ["^GSPC", "^IXIC", "GC=F", "USDMYR=X"]
+editorial_focus: >              # injected into the Claude prompt for this profile
+  News that moves US equities and gold/metals; macro & central banks; keep MY relevance in mind.

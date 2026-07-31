@@ -1,0 +1,18 @@
+name: malaysia_politics
+description: Malaysia and global politics
+language: en
+feeds:
+  - {label: Free Malaysia Today, url: "https://www.freemalaysiatoday.com/feed/"}
+  - {label: Free Malaysia Today Nation, url: "https://www.freemalaysiatoday.com/category/nation/feed/"}
+  - {label: New Straits Times, url: "https://www.nst.com.my/feed"}
+  - {label: Bernama, url: "https://www.bernama.com/en/rssfeed.php"}
+  - {label: Malay Mail, url: "https://www.malaymail.com/feed/rss/malaysia"}
+gnews_fallback:
+  - "world politics when:1d"
+  - "geopolitics when:1d"
+  - "Malaysia politics when:1d"
+market_snapshot:
+  enabled: false
+  symbols: []
+editorial_focus: >
+  Malaysia domestic politics and global politics that matters to a Malaysia-based reader.

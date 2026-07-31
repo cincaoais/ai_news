@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+  <title>Fixture Stale Feed</title>
+  <link>https://stale.example.com/</link>
+  <description>Every item here is frozen well over 48 hours old</description>
+  <item>
+    <title>Ancient Item A</title>
+    <link>https://stale.example.com/articles/ancient-a</link>
+    <description>This item is very old.</description>
+    <pubDate>Mon, 20 Jul 2026 09:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Ancient Item B</title>
+    <link>https://stale.example.com/articles/ancient-b</link>
+    <description>So is this one.</description>
+    <pubDate>Sun, 19 Jul 2026 09:00:00 GMT</pubDate>
+  </item>
+</channel>
+</rss>
