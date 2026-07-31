@@ -118,6 +118,17 @@ operator README. Coder also legitimately fixed 2 pre-existing tests that had beg
 depending on the dev machine's now-populated .env (loader neutralized in those tests only).
 CLAUDE.md weekend rule verified already present. Phase 3 closed; Phase 4 opened.
 
+### 2026-07-31 (evening) — Phase 4 COMPLETE; docs/04-REVIEW.md published
+Fix pass verified (commit e64a9ec, 213 passed on commander re-run) + README correction
+(5bf772e). Live GitHub verification all green: watchdog.yml first-ever dispatch success
+(9s); digest.yml mock dispatch success (39s); digest.yml REAL-AUTH dry-run success
+(2m31s, run 30617659091) — subscription OAuth token authenticates in CI, settling the
+RND 1-year-vs-24h conflict empirically at T0. Failure-alert delivery drill: induced
+editorial failure → stage-tagged alert DELIVERED to Telegram (closes DoD 6a, the one
+box the conformance audit correctly marked NOT DONE). TELEGRAM_CHAT_ID secret set.
+Remaining open: 3 time-gated observations (see 04-REVIEW Known issues) + 4 backlog
+hardening items. Phase 4 report presented to user.
+
 ### 2026-07-31 (evening) — Phase 4 in progress
 Scenario walkthroughs run by commander (same-day guard block + --force override +
 dead-creds loud 401 + BOM discovery). Three parallel fresh-eyes reviews (correctness,
