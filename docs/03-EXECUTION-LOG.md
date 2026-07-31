@@ -7,7 +7,7 @@ Phase 3 · Sequential mode · Plan: `docs/02-PLAN.md` (approved 2026-07-31, 1 re
 | 1 — Config + fetcher | Sonnet coder | ✅ DONE 2026-07-31 (commit a615ae0) | 41 unit + 1 live smoke passed; commander re-ran: 41 passed | date-tz → S2; gnews locale → S6 |
 | 2 — Telegram out + state | Sonnet coder | ✅ DONE 2026-07-31 (commit 5428498) | 113 passed (53 new + all prior); commander re-ran: 113 passed; dry-run HTML demo verified | tzdata dep added; real send deferred to Checkpoint A |
 | 3 — Claude editorial step | Sonnet coder + commander takeover | ✅ DONE 2026-07-31 (provisional per plan: cloud parity pending S4/S5) | 131 passed (commander-run); live claude -p Sonnet run → valid 8-item selection; dry-run digest EXIT=0; mock path EXIT=0 | mock-mode stale-index quirk → Phase 4 |
-| 4 — Actions fallback workflow | Sonnet coder | pending | — | Checkpoint B first |
+| 4 — Actions fallback workflow | Sonnet coder | ✅ AUTHORED 2026-07-31 (commit ed06165); on-GitHub gate deferred to Checkpoint B | actionlint exit 0; 133 passed (commander re-ran: 133); local mock run exit 0 | [skip ci] added to update_state; soak test pending |
 | 5 — Routine setup + live validation | Commander | pending | — | Checkpoints A–C |
 | 6 — Ops hardening + docs | Sonnet coder | pending | — | — |
 
@@ -62,3 +62,16 @@ candidates; RUNBOOK never re-fetches between steps) — mock-mode cosmetic only.
 Environment note: `gh` CLI not installed → Checkpoint B (repo creation/push) is
 user-blocked; Slice 4 will author + locally validate everything, on-GitHub mock dispatch
 deferred until Checkpoint B.
+
+### 2026-07-31 — Slice 4 verified & accepted (commit ed06165); BUILD PAUSED AT CHECKPOINTS
+Evidence: coder pasted actionlint v1.7.12 exit 0, YAML parse OK, 133 passed; commander
+re-ran suite (133 passed) and reviewed digest.yml line-by-line — all RND laws encoded
+(no action wrapper, no --bare, no ANTHROPIC_API_KEY, off-hour dormant cron, concurrency,
+timeout, git identity, failure notifier step). Coder correctly added [skip ci] to
+update_state.py commit message + end-to-end test.
+PAUSED: remaining work is user-blocked. Checkpoint A (BotFather token + chat_id) →
+enables live Telegram sends. Checkpoint B (GitHub repo + secrets + claude setup-token) →
+enables Slice 4's on-GitHub gate + soak test. Then Slice 5 (Routine, commander-led with
+Checkpoint C), Slice 6, Phase 4.
+Resume point for a fresh session: read this log top to bottom; next action = user
+checkpoints, then Slice 5 per docs/02-PLAN.md.
