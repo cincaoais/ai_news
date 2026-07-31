@@ -8,7 +8,7 @@ Phase 3 · Sequential mode · Plan: `docs/02-PLAN.md` (approved 2026-07-31, 1 re
 | 2 — Telegram out + state | Sonnet coder | ✅ DONE 2026-07-31 (commit 5428498) | 113 passed (53 new + all prior); commander re-ran: 113 passed; dry-run HTML demo verified | tzdata dep added; real send deferred to Checkpoint A |
 | 3 — Claude editorial step | Sonnet coder + commander takeover | ✅ DONE 2026-07-31 (provisional per plan: cloud parity pending S4/S5) | 131 passed (commander-run); live claude -p Sonnet run → valid 8-item selection; dry-run digest EXIT=0; mock path EXIT=0 | mock-mode stale-index quirk → Phase 4 |
 | 4 — Actions fallback workflow | Sonnet coder | ✅ AUTHORED 2026-07-31 (commit ed06165); on-GitHub gate deferred to Checkpoint B | actionlint exit 0; 133 passed (commander re-ran: 133); local mock run exit 0 | [skip ci] added to update_state; soak test pending |
-| 5 — Routine setup + live validation | Commander | pending | — | Checkpoints A–C |
+| 5 — Routine setup + live validation | Commander | ✅ LIVE 2026-07-31 (trig_01M98TDSfUSwiTczPxc7ggUU) | Cloud run cse_014b…: sports digest delivered to Telegram; state commit 16d1387 pushed to origin/main by the cloud session | 3-consecutive-runs observation ongoing; connector-strip deferred (see entry) |
 | 6 — Ops hardening + docs | Sonnet coder | pending | — | — |
 
 ## Log entries
@@ -88,6 +88,25 @@ step needs no shell; the Routine path gets shell from RUNBOOK anyway); (4) 200-c
 CLAUDE.md under Slice 2's 300-char validator ceiling is intentional layering.
 Correction to its report: tests/fixtures/mock_selection.json is NOT an orphan — commander
 authored it; digest.yml's mock path references it.
+
+### 2026-07-31 (late afternoon) — Slice 5 complete: Routine created + live cloud run green
+Checkpoint C friction: /web-setup repeatedly failed in the original CLI window (PATH frozen
+pre-gh-install; user retried in-window several times) — resolved once run in a NEW terminal
+with gh authed. Routine created via RemoteTrigger API: "Daily AI News Digest (8:00 MYT)",
+cron 0 0 * * * UTC (=08:00 MYT; actual ~08:06 platform stagger), model claude-sonnet-5,
+repo cincaoais/ai_news, tools Bash/Read/Write/Edit/Glob/Grep.
+Live run 1 FAILED as-designed-and-diagnosable: env still had Trusted network → feeds AND
+api.telegram.org blocked → fetch exit nonzero → notifier undeliverable → session's own
+report reached the user (third channel, unplanned but welcome). Fix: env → network Full +
+TELEGRAM_* env vars (user, web UI). Live run 2 GREEN end-to-end: sports digest delivered;
+state commit 16d1387 "[skip ci]" pushed by the cloud session DIRECTLY TO origin/main —
+settles RND's open question (no claude/-branch fallback needed). Profile restored to
+finance_metals (cf4afec). This closes Slice 3's "provisional" status for the Routine path.
+DECISION — connectors left attached to the routine (FMP/Bigdata/firecrawl auto-attached by
+API): allowed_tools excludes their tools and the runbook forbids improvising; stripping is
+doc-recommended hygiene but unverified against the auto-attached Claude_Code_Remote infra
+connector — do NOT strip blind before a scheduled run; do it on a controlled Run-now day.
+Recorded in README backlog + Phase 4 known-remaining.
 
 ### 2026-07-31 (afternoon) — Checkpoints A+B complete; FIRST REAL DIGEST DELIVERED
 User completed: BotFather bot + /start; .env token paste (commander added .env support,
