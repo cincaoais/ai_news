@@ -16,6 +16,8 @@ from typing import Optional
 
 import requests
 
+from lib.env import load_dotenv
+
 API_BASE = "https://api.telegram.org"
 REQUEST_TIMEOUT_SECONDS = 15
 
@@ -68,6 +70,7 @@ def fetch_updates(token: str, *, timeout: int = REQUEST_TIMEOUT_SECONDS) -> list
 
 
 def main(argv: Optional[list[str]] = None) -> int:
+    load_dotenv()
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
     if not token:
         print("get_chat_id: TELEGRAM_BOT_TOKEN environment variable is not set", file=sys.stderr)

@@ -35,6 +35,7 @@ import build_and_send
 import fetch_news
 import notify_failure
 import update_state
+from lib.env import load_dotenv
 
 logger = logging.getLogger(__name__)
 
@@ -292,6 +293,7 @@ def run(
 
 
 def main(argv: Optional[list[str]] = None) -> int:
+    load_dotenv()
     logging.basicConfig(
         level=logging.INFO, stream=sys.stderr,
         format="%(asctime)s %(levelname)s %(name)s: %(message)s",

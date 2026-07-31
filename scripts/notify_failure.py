@@ -21,6 +21,8 @@ from typing import Optional
 
 import requests
 
+from lib.env import load_dotenv
+
 logger = logging.getLogger(__name__)
 
 API_BASE = "https://api.telegram.org"
@@ -45,6 +47,7 @@ def send_plain_text(token: str, chat_id: str, text: str, *, timeout: int = REQUE
 
 
 def main(argv: Optional[list[str]] = None) -> int:
+    load_dotenv()
     logging.basicConfig(
         level=logging.INFO, stream=sys.stderr,
         format="%(asctime)s %(levelname)s %(name)s: %(message)s",
