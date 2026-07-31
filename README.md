@@ -36,8 +36,10 @@ your existing Claude subscription -- no LLM API key, no PC left on.
  whole pipeline never running at all → .github/workflows/watchdog.yml (channel 2)
 ```
 
-See `docs/02-PLAN.md` for the full design rationale and `RUNBOOK.md` for the exact
-step-by-step procedure both schedulers execute.
+See `docs/02-PLAN.md` for the full design rationale. `RUNBOOK.md` is the step-by-step
+procedure the Routine (primary scheduler) literally follows as its instructions; the
+GitHub Actions fallback performs the equivalent steps in code via `scripts/run_digest.py`
+and never reads `RUNBOOK.md` itself.
 
 ## Daily operation
 
