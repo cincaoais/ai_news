@@ -22,6 +22,7 @@ from typing import Optional
 import requests
 
 from lib.env import load_dotenv
+from lib.telegram import redact_token
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +72,12 @@ def main(argv: Optional[list[str]] = None) -> int:
         send_plain_text(token, chat_id, f"[ai-news alert] {message}")
     except Exception as exc:  # noqa: BLE001 -- intentional: never let a
         # notifier failure mask the original failure that triggered it.
-        print(f"notify_failure: failed to deliver alert ({exc}); original message was: {message}", file=sys.stderr)
+        # redact_token: `exc` may be a requests exception whose str() embeds
+        # the request URL (".../bot<token>/sendMessage") -- this is the
+        # last-resort failure path, so it must never leak the token to
+        # stderr/CI logs even here.
+        safe_exc = redact_token(str(exc), token)
+        print(f"notify_failure: failed to deliver alert ({safe_exc}); original message was: {message}", file=sys.stderr)
         return 0
 
     return 0

@@ -138,7 +138,9 @@ def _load_selection_prose_tolerant(path: Path) -> dict:
     """Load selection.json; if it isn't pure JSON (the model wrapped it in
     prose or a fenced code block), strip to the first '{' through the
     last '}' and retry once before declaring it invalid."""
-    text = path.read_text(encoding="utf-8")
+    # utf-8-sig: tolerates (and strips) a leading UTF-8 BOM, same rationale
+    # as build_and_send.load_json.
+    text = path.read_text(encoding="utf-8-sig")
     try:
         return json.loads(text)
     except json.JSONDecodeError:
@@ -262,7 +264,8 @@ def run(
     # Stage 3: validate + send (or print, under --dry-run)
     try:
         send_result = build_and_send.run(
-            dry_run=dry_run, force=force, work_dir=work_dir, state_dir=state_dir, now=now,
+            dry_run=dry_run, force=force, work_dir=work_dir, state_dir=state_dir,
+            repo_root=repo_root, now=now,
         )
     except Exception as exc:  # noqa: BLE001
         notify(STAGE_SEND, str(exc))

@@ -17,6 +17,7 @@ from typing import Optional
 import requests
 
 from lib.env import load_dotenv
+from lib.telegram import redact_token
 
 API_BASE = "https://api.telegram.org"
 REQUEST_TIMEOUT_SECONDS = 15
@@ -71,6 +72,13 @@ def fetch_updates(token: str, *, timeout: int = REQUEST_TIMEOUT_SECONDS) -> list
 
 def main(argv: Optional[list[str]] = None) -> int:
     load_dotenv()
+    # Windows consoles default stdout to the system codepage (e.g. cp1252),
+    # which can't encode every character a Telegram chat display name might
+    # contain -- force UTF-8 explicitly, matching build_and_send.py's
+    # main() (F9 in the Phase 4 review).
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
     if not token:
         print("get_chat_id: TELEGRAM_BOT_TOKEN environment variable is not set", file=sys.stderr)
@@ -79,7 +87,10 @@ def main(argv: Optional[list[str]] = None) -> int:
     try:
         updates = fetch_updates(token)
     except (requests.RequestException, RuntimeError) as exc:
-        print(f"get_chat_id: failed to call getUpdates: {exc}", file=sys.stderr)
+        # redact_token: a requests exception's str() often embeds the
+        # request URL (".../bot<token>/getUpdates").
+        safe_exc = redact_token(str(exc), token)
+        print(f"get_chat_id: failed to call getUpdates: {safe_exc}", file=sys.stderr)
         return 1
 
     chats = get_distinct_chats(updates)

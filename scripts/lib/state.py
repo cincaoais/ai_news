@@ -74,6 +74,26 @@ def bootstrap_state_dir(state_dir: Path) -> None:
         seen_path.touch()
 
 
+def parse_front_matter(text: str, *, source_label: str = "text") -> Optional[dict]:
+    """Parse YAML front-matter out of `text` (e.g. a last_digest.md file's
+    own content, or `git show origin/main:state/last_digest.md`'s stdout).
+
+    Returns {"date": ..., "profile": ...}, or None if there's no
+    parseable `---`-delimited front-matter block at all.
+    """
+    match = _FRONT_MATTER_RE.match(text)
+    if not match:
+        return None
+
+    try:
+        meta = yaml.safe_load(match.group(1))
+    except yaml.YAMLError:
+        logger.warning("could not parse front-matter of %s; treating as absent", source_label)
+        return None
+
+    return meta if isinstance(meta, dict) else None
+
+
 def read_last_digest_front_matter(path: Path) -> Optional[dict]:
     """Parse state/last_digest.md's YAML front-matter, returning
     {"date": ..., "profile": ...} (or None if the file doesn't exist yet --
@@ -82,17 +102,7 @@ def read_last_digest_front_matter(path: Path) -> Optional[dict]:
         return None
 
     text = path.read_text(encoding="utf-8")
-    match = _FRONT_MATTER_RE.match(text)
-    if not match:
-        return None
-
-    try:
-        meta = yaml.safe_load(match.group(1))
-    except yaml.YAMLError:
-        logger.warning("could not parse front-matter of %s; treating as absent", path)
-        return None
-
-    return meta if isinstance(meta, dict) else None
+    return parse_front_matter(text, source_label=str(path))
 
 
 def write_last_digest(path: Path, *, date: str, profile: str, headlines: list[str]) -> None:

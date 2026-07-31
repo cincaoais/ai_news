@@ -86,7 +86,7 @@ def test_happy_path_runs_all_four_stages_in_order(tmp_path, monkeypatch, _notifi
         calls.append("editorial")
         return _valid_selection()
 
-    def fake_send_run(*, dry_run=False, force=False, work_dir=None, state_dir=None, now=None):
+    def fake_send_run(*, dry_run=False, force=False, work_dir=None, state_dir=None, repo_root=None, now=None):
         calls.append("send")
         return {"messages": ["m"], "dry_run": dry_run}
 
@@ -190,6 +190,27 @@ def test_send_stage_failure_notifies_send_tag(tmp_path, monkeypatch, _notifier_s
 
     assert exit_code == 1
     assert _notifier_stub[0].startswith("send: ")
+
+
+def test_send_stage_receives_repo_root(tmp_path, monkeypatch, _notifier_stub):
+    """build_and_send.py's F6 pre-send origin re-check needs the actual
+    repo_root run_digest.py was given (e.g. a test fixture repo, not
+    whatever the CWD happens to be) -- verify run_digest.py forwards it."""
+    monkeypatch.setattr(rd.fetch_news, "run", lambda **kwargs: {"profile": "finance_metals"})
+    monkeypatch.setattr(rd, "run_editorial_step", lambda **kwargs: _valid_selection())
+    monkeypatch.setattr(rd.update_state, "run", lambda **kwargs: {})
+
+    captured = {}
+
+    def fake_send_run(**kwargs):
+        captured.update(kwargs)
+        return {"messages": [], "dry_run": False}
+
+    monkeypatch.setattr(rd.build_and_send, "run", fake_send_run)
+
+    rd.run(work_dir=tmp_path / "work", state_dir=tmp_path / "state", repo_root=tmp_path)
+
+    assert captured["repo_root"] == tmp_path
 
 
 def test_state_stage_failure_notifies_state_tag(tmp_path, monkeypatch, _notifier_stub):
@@ -380,6 +401,12 @@ def test_load_selection_prose_tolerant_no_json_object_raises(tmp_path):
     path.write_text("I could not find any relevant news today.", encoding="utf-8")
     with pytest.raises(ValueError):
         rd._load_selection_prose_tolerant(path)
+
+
+def test_load_selection_prose_tolerant_tolerates_utf8_bom(tmp_path):
+    path = tmp_path / "selection.json"
+    path.write_bytes(b"\xef\xbb\xbf" + json.dumps(_valid_selection()).encode("utf-8"))
+    assert rd._load_selection_prose_tolerant(path)["items"][0]["index"] == 0
 
 
 # ---------------------------------------------------------------------------

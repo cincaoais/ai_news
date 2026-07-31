@@ -36,6 +36,11 @@ CANDIDATES_PATH = WORK_DIR / "candidates.json"
 MAX_CANDIDATES = 40
 THIN_NEWS_THRESHOLD = 3  # strictly fewer than this -> thin_news = true
 
+DEFAULT_MIN_ITEMS = 5
+DEFAULT_MAX_ITEMS = 8
+
+_ALLOWED_URL_SCHEMES = ("http://", "https://")
+
 
 class NoCandidatesError(RuntimeError):
     """Raised when 0 candidates remain after filtering (feeds down/stale)."""
@@ -95,12 +100,27 @@ def gather_raw_items(
     return items, feed_warnings
 
 
+def _has_allowed_url_scheme(url: str) -> bool:
+    """http(s) only, case-insensitive. Guards against a feed entry whose
+    <link> is a javascript:/data: URI (or anything else) slipping through
+    to candidates.json -- build_and_send.py attaches this URL verbatim into
+    an <a href="..."> the user's Telegram client will render/follow."""
+    return url.strip().lower().startswith(_ALLOWED_URL_SCHEMES)
+
+
 def canonicalize_and_dedupe(items: list[FeedItem], seen: set[str]) -> list[FeedItem]:
     """Canonicalize each item's URL, drop already-seen ones, and dedupe
-    within this run by canonical URL (first occurrence wins)."""
+    within this run by canonical URL (first occurrence wins).
+
+    Also drops (with a warning) any item whose URL is not http(s) -- see
+    _has_allowed_url_scheme.
+    """
     result: list[FeedItem] = []
     seen_this_run: set[str] = set()
     for item in items:
+        if not _has_allowed_url_scheme(item.url):
+            logger.warning("dropping candidate with disallowed URL scheme: %r", item.url)
+            continue
         canonical = state.canonicalize_url(item.url)
         if canonical in seen or canonical in seen_this_run:
             continue
@@ -163,7 +183,8 @@ def build_candidates_payload(
     deduped = canonicalize_and_dedupe(raw_items, seen)
 
     lookback_hours = config["lookback_hours"]
-    min_items = config["min_items"]
+    min_items = config.get("min_items", DEFAULT_MIN_ITEMS)
+    max_items = config.get("max_items", DEFAULT_MAX_ITEMS)
     candidates, thin_news = apply_thin_news_policy(deduped, lookback_hours, min_items, now=now)
 
     if not candidates:
@@ -187,6 +208,11 @@ def build_candidates_payload(
         "thin_news": thin_news,
         "feed_warnings": feed_warnings,
         "market": market_block,
+        # build_and_send.py's validate_selection() reads these back to
+        # enforce Claude's editorial selection stays within config.yaml's
+        # min_items/max_items (config's own max_items was dead until this
+        # wiring -- see F4 in the Phase 4 review).
+        "limits": {"min_items": min_items, "max_items": max_items},
         "items": [
             {
                 "index": i,

@@ -27,15 +27,39 @@ class TelegramError(RuntimeError):
 
 
 def escape_html(text: Optional[str]) -> str:
-    """Escape the exactly 3 characters HTML parse_mode requires.
+    """Escape the characters HTML parse_mode requires, PLUS '"' (double
+    quote) -- Telegram's HTML parser supports exactly the named entities
+    lt/gt/amp/quot, so escaping all four is safe everywhere this function is
+    used (titles, summaries, URLs, header), and closes an attribute-breakout
+    path: an unescaped '"' inside a URL or title could otherwise terminate
+    the `href="..."` attribute early and let attacker-controlled text inject
+    new HTML (e.g. a fake `<a href="...">` link) into the rendered message.
 
-    Order matters: '&' MUST be escaped first. Escaping '<'/'>' first would
-    turn them into "&lt;"/"&gt;", and THEN escaping '&' would double-escape
-    the '&' those replacements just introduced.
+    Order matters: '&' MUST be escaped first. Escaping '<'/'>'/'"' first
+    would turn them into "&lt;"/"&gt;"/"&quot;", and THEN escaping '&' would
+    double-escape the '&' those replacements just introduced.
     """
     if not text:
         return ""
-    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    return (
+        text.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+    )
+
+
+def redact_token(text: str, token: str) -> str:
+    """Replace every occurrence of `token` in `text` with '***TOKEN***'.
+
+    No-op for an empty/falsy token (nothing to redact). Used to keep the bot
+    token out of any raised/printed/logged message that interpolates a
+    requests exception or a Telegram API response -- both can echo back the
+    request URL, which embeds the token as `.../bot<token>/sendMessage`.
+    """
+    if not token:
+        return text
+    return text.replace(token, "***TOKEN***")
 
 
 def _utf16_len(s: str) -> int:
@@ -116,15 +140,22 @@ def send_message(
         try:
             resp = http.post(url, json=payload, timeout=REQUEST_TIMEOUT_SECONDS)
         except requests.RequestException as exc:
+            # A requests exception's own str() often embeds the request URL
+            # (which contains the bot token, e.g. ".../bot<token>/sendMessage")
+            # -- redact before this ever reaches a log line or a raised
+            # message that a caller might print/relay (e.g. notify_failure.py).
+            safe_exc = redact_token(str(exc), token)
             if attempt < max_attempts_5xx:
                 backoff = 2 ** (attempt - 1)
                 logger.warning(
                     "network error sending to Telegram (attempt %d/%d): %s; retrying in %ds",
-                    attempt, max_attempts_5xx, exc, backoff,
+                    attempt, max_attempts_5xx, safe_exc, backoff,
                 )
                 time.sleep(backoff)
                 continue
-            raise TelegramError(f"network error sending to Telegram after {attempt} attempt(s): {exc}") from exc
+            raise TelegramError(
+                f"network error sending to Telegram after {attempt} attempt(s): {safe_exc}"
+            ) from exc
 
         try:
             data = resp.json()
@@ -134,7 +165,9 @@ def send_message(
         if resp.status_code == 200 and data.get("ok"):
             return data.get("result", {})
 
-        description = data.get("description", resp.text)
+        # redact here too -- resp.text (the fallback when the API gives no
+        # `description`) could in principle echo request details back.
+        description = redact_token(str(data.get("description", resp.text)), token)
 
         if resp.status_code == 429 and not retried_429:
             retry_after = (data.get("parameters") or {}).get("retry_after", 1)

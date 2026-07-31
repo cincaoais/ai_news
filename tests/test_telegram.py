@@ -52,6 +52,80 @@ def test_escape_html_nested_tag_attempt_neutralized():
 
 
 # ---------------------------------------------------------------------------
+# escape_html: F1 -- quote escaping (attribute-breakout prevention)
+# ---------------------------------------------------------------------------
+
+def test_escape_html_quotes_escaped():
+    assert telegram.escape_html('a "quoted" string') == "a &quot;quoted&quot; string"
+
+
+def test_escape_html_no_raw_quote_remains():
+    assert '"' not in telegram.escape_html('a "quoted" string')
+
+
+def test_escape_html_ampersand_still_escaped_first_with_quotes_present():
+    # '&' must still be escaped before '"' is introduced, same reasoning as
+    # the existing '<'/'>' ordering test -- otherwise the '&' from
+    # '&quot;' would get double-escaped into '&amp;quot;'.
+    assert telegram.escape_html('&"') == "&amp;&quot;"
+
+
+def test_escape_html_url_attribute_breakout_attempt_fully_inert():
+    # A URL crafted to close an href="..." attribute early and inject a
+    # brand-new <a> tag (a classic HTML-in-attribute injection). After
+    # escaping, no raw '"' or '<'/'>' may survive at all.
+    breakout = 'https://evil.example/"><a href="https://phish.example">x</a>'
+    escaped = telegram.escape_html(breakout)
+    assert '"' not in escaped
+    assert "<" not in escaped
+    assert ">" not in escaped
+    assert "&quot;" in escaped
+
+
+def test_build_item_block_neutralizes_quote_breakout_in_url_and_summary():
+    # End-to-end through build_and_send.py's build_item_block: the only two
+    # raw '"' characters allowed in the rendered block are the href="..."
+    # attribute delimiters build_item_block itself writes -- none may come
+    # from attacker-controlled title/url/summary text.
+    import build_and_send as bas
+
+    item = {
+        "index": 0,
+        "title": 'Normal Title with "quotes"',
+        "url": 'https://evil.example/"><a href="https://phish.example">x</a>',
+        "source": "Src",
+        "summary": 'Summary with "quotes" inside it',
+        "category": None,
+    }
+    block = bas.build_item_block(item)
+    # Exactly the two href="..." delimiters build_item_block itself writes
+    # -- none surviving from the attacker-controlled title/url/summary.
+    assert block.count('"') == 2
+    assert block.count("<a href=") == 1  # only the one legitimate tag
+    assert '<a href="https://phish.example">' not in block  # the injected tag never materializes
+
+
+# ---------------------------------------------------------------------------
+# redact_token (F2)
+# ---------------------------------------------------------------------------
+
+def test_redact_token_replaces_all_occurrences():
+    text = "error at bot12345:ABC/sendMessage and again bot12345:ABC/x"
+    result = telegram.redact_token(text, "12345:ABC")
+    assert "12345:ABC" not in result
+    assert result.count("***TOKEN***") == 2
+
+
+def test_redact_token_empty_token_is_noop():
+    assert telegram.redact_token("some text", "") == "some text"
+    assert telegram.redact_token("some text", None) == "some text"
+
+
+def test_redact_token_no_occurrence_is_unchanged():
+    assert telegram.redact_token("nothing to see here", "SECRET") == "nothing to see here"
+
+
+# ---------------------------------------------------------------------------
 # split_into_messages
 # ---------------------------------------------------------------------------
 
@@ -254,6 +328,47 @@ def test_send_message_other_4xx_raises_immediately_with_api_description(monkeypa
     with pytest.raises(telegram.TelegramError, match="can't parse entities"):
         telegram.send_message("TOKEN", "CHAT", "hello", session=session)
     assert session.calls == 1  # no retry at all for a non-429/5xx 4xx
+
+
+def test_send_message_network_error_redacts_token_in_raised_message(monkeypatch):
+    monkeypatch.setattr(telegram_mod.time, "sleep", lambda s: None)
+    token = "123456:SECRETTOKEN"
+    exc = requests.ConnectionError(
+        f"Failed to establish a new connection: HTTPSConnectionPool(host='api.telegram.org') "
+        f"bot{token}/sendMessage"
+    )
+    session = _FakeSession([exc, exc])  # exhaust both attempts
+
+    with pytest.raises(telegram.TelegramError) as excinfo:
+        telegram.send_message(token, "CHAT", "hello", session=session)
+
+    assert token not in str(excinfo.value)
+    assert "***TOKEN***" in str(excinfo.value)
+
+
+def test_send_message_network_error_redacts_token_in_retry_warning_log(monkeypatch, caplog):
+    monkeypatch.setattr(telegram_mod.time, "sleep", lambda s: None)
+    token = "123456:SECRETTOKEN"
+    exc = requests.ConnectionError(f"connection refused bot{token}/sendMessage")
+    session = _FakeSession([exc, _ok_response()])
+
+    with caplog.at_level("WARNING"):
+        telegram.send_message(token, "CHAT", "hello", session=session)
+
+    assert token not in caplog.text
+    assert "***TOKEN***" in caplog.text
+
+
+def test_send_message_api_error_redacts_token_in_description(monkeypatch):
+    monkeypatch.setattr(telegram_mod.time, "sleep", lambda s: (_ for _ in ()).throw(AssertionError("should not sleep")))
+    token = "123456:SECRETTOKEN"
+    session = _FakeSession([_error_response(400, f"Bad Request: bot{token}/sendMessage not found")])
+
+    with pytest.raises(telegram.TelegramError) as excinfo:
+        telegram.send_message(token, "CHAT", "hello", session=session)
+
+    assert token not in str(excinfo.value)
+    assert "***TOKEN***" in str(excinfo.value)
 
 
 def test_send_message_sends_html_parse_mode_and_disabled_previews():

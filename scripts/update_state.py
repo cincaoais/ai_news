@@ -33,6 +33,20 @@ STATE_DIR = REPO_ROOT / "state"
 
 PRUNE_DAYS = 30
 
+# F7: by the time git_commit_and_push runs, build_and_send.py has ALREADY
+# delivered the digest (that's this whole script's precondition -- see
+# load_sent_items/work/sent.json below). So any failure past that point is
+# never "the digest didn't go out" -- it's "the digest went out fine, but
+# tomorrow's dedup bookkeeping is at risk." Every UpdateStateError this
+# module raises for a git_commit_and_push failure says so explicitly,
+# because run_digest.py routes this straight into notify_failure.py's
+# "state:"-tagged Telegram alert -- the user reading that alert needs to
+# know immediately that nothing was actually lost, only state.
+STATE_PUSH_FAILURE_NOTE = (
+    "digest WAS already sent; only the dedup state failed to push -- "
+    "tomorrow's digest may repeat today's stories"
+)
+
 
 class UpdateStateError(RuntimeError):
     """Raised for any unrecoverable failure in this step (missing
@@ -135,7 +149,7 @@ def git_commit_and_push(repo_root: Path, message: str) -> None:
     """
     add = subprocess.run(["git", "add", "state/"], cwd=repo_root, capture_output=True, text=True)
     if add.returncode != 0:
-        raise UpdateStateError(f"git add state/ failed: {add.stderr.strip()}")
+        raise UpdateStateError(f"git add state/ failed: {add.stderr.strip()}. {STATE_PUSH_FAILURE_NOTE}")
 
     diff = subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=repo_root)
     if diff.returncode == 0:
@@ -146,7 +160,7 @@ def git_commit_and_push(repo_root: Path, message: str) -> None:
         ["git", "commit", "-m", message], cwd=repo_root, capture_output=True, text=True,
     )
     if commit.returncode != 0:
-        raise UpdateStateError(f"git commit failed: {commit.stderr.strip()}")
+        raise UpdateStateError(f"git commit failed: {commit.stderr.strip()}. {STATE_PUSH_FAILURE_NOTE}")
 
     if not _has_remote(repo_root):
         logger.info("no git remote configured -- skipping push (dev machine; remote comes at Checkpoint B)")
@@ -159,11 +173,15 @@ def git_commit_and_push(repo_root: Path, message: str) -> None:
     logger.warning("git push rejected, attempting pull --rebase then one retry: %s", push.stderr.strip())
     rebase = subprocess.run(["git", "pull", "--rebase"], cwd=repo_root, capture_output=True, text=True)
     if rebase.returncode != 0:
-        raise UpdateStateError(f"git pull --rebase failed after a rejected push: {rebase.stderr.strip()}")
+        raise UpdateStateError(
+            f"git pull --rebase failed after a rejected push: {rebase.stderr.strip()}. {STATE_PUSH_FAILURE_NOTE}"
+        )
 
     retry_push = subprocess.run(["git", "push"], cwd=repo_root, capture_output=True, text=True)
     if retry_push.returncode != 0:
-        raise UpdateStateError(f"git push failed even after pull --rebase retry: {retry_push.stderr.strip()}")
+        raise UpdateStateError(
+            f"git push failed even after pull --rebase retry: {retry_push.stderr.strip()}. {STATE_PUSH_FAILURE_NOTE}"
+        )
 
 
 # ---------------------------------------------------------------------------

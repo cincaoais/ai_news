@@ -66,6 +66,24 @@ def test_main_send_failure_is_swallowed_and_still_exits_zero(monkeypatch, capsys
     assert "build_and_send: some stage failed" in err
 
 
+def test_main_send_failure_redacts_token_from_stderr(monkeypatch, capsys):
+    token = "123456:SECRETTOKEN"
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", token)
+    monkeypatch.setenv("TELEGRAM_CHAT_ID", "CHAT")
+
+    def _raise(*args, **kwargs):
+        raise RuntimeError(f"Telegram sendMessage failed calling bot{token}/sendMessage")
+
+    monkeypatch.setattr(notify_failure, "send_plain_text", _raise)
+
+    exit_code = notify_failure.main(["build_and_send: some stage failed"])
+
+    assert exit_code == 0
+    err = capsys.readouterr().err
+    assert token not in err
+    assert "***TOKEN***" in err
+
+
 def test_main_success_calls_send_plain_text_with_prefixed_message(monkeypatch):
     monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "TOKEN")
     monkeypatch.setenv("TELEGRAM_CHAT_ID", "CHAT")

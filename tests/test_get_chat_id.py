@@ -82,6 +82,47 @@ def test_main_no_chats_yet_prints_helpful_hint(monkeypatch, capsys):
     assert "/start" in capsys.readouterr().out
 
 
+def test_main_fetch_failure_redacts_token_from_stderr(monkeypatch, capsys):
+    token = "123456:SECRETTOKEN"
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", token)
+
+    def _raise(token_arg, timeout=15):
+        raise RuntimeError(f"getUpdates failed: bot{token}/getUpdates returned 404")
+
+    monkeypatch.setattr(get_chat_id, "fetch_updates", _raise)
+
+    exit_code = get_chat_id.main([])
+
+    assert exit_code == 1
+    err = capsys.readouterr().err
+    assert token not in err
+    assert "***TOKEN***" in err
+
+
+def test_main_reconfigures_stdout_to_utf8(monkeypatch):
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "TOKEN")
+    monkeypatch.setattr(get_chat_id, "fetch_updates", lambda token, timeout=15: [])
+
+    reconfigure_calls = []
+
+    class _FakeStdout:
+        def reconfigure(self, **kwargs):
+            reconfigure_calls.append(kwargs)
+
+        def write(self, s):
+            return len(s)
+
+        def flush(self):
+            pass
+
+    monkeypatch.setattr(get_chat_id.sys, "stdout", _FakeStdout())
+
+    exit_code = get_chat_id.main([])
+
+    assert exit_code == 0
+    assert reconfigure_calls == [{"encoding": "utf-8", "errors": "replace"}]
+
+
 def test_main_missing_token_errors_without_calling_the_api(monkeypatch, capsys):
     monkeypatch.delenv("TELEGRAM_BOT_TOKEN", raising=False)
     # main() calls load_dotenv() itself -- on a dev machine with a real

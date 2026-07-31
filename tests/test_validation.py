@@ -5,6 +5,8 @@ model-authored text field, since the model must never author a URL."""
 
 from __future__ import annotations
 
+import json
+
 import pytest
 
 import build_and_send as bas
@@ -135,3 +137,96 @@ def test_validate_selection_profile_mismatch_rejected():
     selection = {"profile": "sports", "items": [{"index": 0, "summary": "fine summary"}]}
     with pytest.raises(bas.ValidationError, match="profile"):
         bas.validate_selection(selection, _candidates(profile="finance_metals"))
+
+
+# ---------------------------------------------------------------------------
+# F4: item-count bounds (min_items/max_items from candidates.json's `limits`)
+# ---------------------------------------------------------------------------
+
+def _candidates_many(n, *, profile="finance_metals", thin_news=False, limits=None):
+    items = [
+        {
+            "index": i, "title": f"Headline {i}", "source": "Src",
+            "url": f"https://example.com/{i}", "published": "2026-07-31T00:00:00+00:00",
+            "snippet": "s",
+        }
+        for i in range(n)
+    ]
+    payload = {
+        "profile": profile, "date": "2026-07-31", "thin_news": thin_news, "market": None,
+        "items": items,
+    }
+    if limits is not None:
+        payload["limits"] = limits
+    return payload
+
+
+def _selection_of(n):
+    return {"items": [{"index": i, "summary": f"summary {i}"} for i in range(n)]}
+
+
+def test_validate_selection_rejects_nine_items_over_default_max_of_eight():
+    candidates = _candidates_many(20)
+    with pytest.raises(bas.ValidationError, match="(?i)max"):
+        bas.validate_selection(_selection_of(9), candidates)
+
+
+def test_validate_selection_rejects_twenty_items_over_max():
+    candidates = _candidates_many(25)
+    with pytest.raises(bas.ValidationError, match="(?i)max"):
+        bas.validate_selection(_selection_of(20), candidates)
+
+
+def test_validate_selection_rejects_below_min_when_enough_candidates_and_not_thin():
+    candidates = _candidates_many(40)  # plenty of candidates, thin_news defaults False
+    with pytest.raises(bas.ValidationError, match="(?i)min"):
+        bas.validate_selection(_selection_of(2), candidates)
+
+
+def test_validate_selection_below_min_accepted_when_thin_news_true():
+    candidates = _candidates_many(40, thin_news=True)
+    result = bas.validate_selection(_selection_of(2), candidates)
+    assert len(result) == 2
+
+
+def test_validate_selection_below_min_accepted_when_only_three_candidates_exist():
+    candidates = _candidates_many(3)
+    result = bas.validate_selection(_selection_of(2), candidates)
+    assert len(result) == 2
+
+
+def test_validate_selection_respects_custom_limits_from_candidates_json():
+    candidates = _candidates_many(10, limits={"min_items": 2, "max_items": 3})
+    # 4 items exceeds the custom max of 3, even though it's under the module
+    # default max of 8.
+    with pytest.raises(bas.ValidationError, match="(?i)max"):
+        bas.validate_selection(_selection_of(4), candidates)
+
+
+def test_validate_selection_exactly_at_max_is_allowed():
+    candidates = _candidates_many(20, limits={"min_items": 1, "max_items": 8})
+    result = bas.validate_selection(_selection_of(8), candidates)
+    assert len(result) == 8
+
+
+def test_validate_selection_error_names_actual_and_allowed_counts():
+    candidates = _candidates_many(20)
+    with pytest.raises(bas.ValidationError, match="9") as excinfo:
+        bas.validate_selection(_selection_of(9), candidates)
+    assert "8" in str(excinfo.value)  # the allowed max is named too
+
+
+# ---------------------------------------------------------------------------
+# F8: load_json tolerates a UTF-8 BOM
+# ---------------------------------------------------------------------------
+
+def test_load_json_tolerates_utf8_bom(tmp_path):
+    path = tmp_path / "candidates.json"
+    path.write_bytes(b"\xef\xbb\xbf" + json.dumps({"a": 1}).encode("utf-8"))
+    assert bas.load_json(path) == {"a": 1}
+
+
+def test_load_json_still_works_without_a_bom(tmp_path):
+    path = tmp_path / "candidates.json"
+    path.write_text(json.dumps({"a": 1}), encoding="utf-8")
+    assert bas.load_json(path) == {"a": 1}

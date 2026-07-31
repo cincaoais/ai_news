@@ -49,6 +49,45 @@ def test_dedupe_within_run_keeps_first_occurrence():
 
 
 # ---------------------------------------------------------------------------
+# F3: URL scheme allowlist (http/https only)
+# ---------------------------------------------------------------------------
+
+def test_canonicalize_and_dedupe_drops_javascript_scheme():
+    items = [_item("Bad", "javascript:alert(1)", 1), _item("Good", "https://example.com/a", 1)]
+    result = fetch_news.canonicalize_and_dedupe(items, seen=set())
+    assert [i.title for i in result] == ["Good"]
+
+
+def test_canonicalize_and_dedupe_drops_data_scheme():
+    items = [
+        _item("Bad", "data:text/html,<script>alert(1)</script>", 1),
+        _item("Good", "http://example.com/a", 1),
+    ]
+    result = fetch_news.canonicalize_and_dedupe(items, seen=set())
+    assert [i.title for i in result] == ["Good"]
+
+
+def test_canonicalize_and_dedupe_keeps_http_and_https():
+    items = [_item("A", "http://example.com/a", 1), _item("B", "https://example.com/b", 1)]
+    result = fetch_news.canonicalize_and_dedupe(items, seen=set())
+    assert {i.title for i in result} == {"A", "B"}
+
+
+def test_canonicalize_and_dedupe_scheme_check_is_case_insensitive():
+    items = [_item("A", "HTTPS://EXAMPLE.COM/a", 1), _item("Bad", "JAVASCRIPT:alert(1)", 1)]
+    result = fetch_news.canonicalize_and_dedupe(items, seen=set())
+    assert [i.title for i in result] == ["A"]
+
+
+def test_canonicalize_and_dedupe_logs_warning_for_dropped_scheme(caplog):
+    items = [_item("Bad", "javascript:alert(1)", 1)]
+    with caplog.at_level("WARNING"):
+        result = fetch_news.canonicalize_and_dedupe(items, seen=set())
+    assert result == []
+    assert "disallowed URL scheme" in caplog.text
+
+
+# ---------------------------------------------------------------------------
 # thin-news policy
 # ---------------------------------------------------------------------------
 
@@ -290,6 +329,28 @@ def test_build_candidates_payload_carries_feed_warnings_through(monkeypatch):
         "finance_metals", _fake_profile(market_enabled=False), config, seen=set(), now=NOW, fetch_market=False
     )
     assert payload["feed_warnings"] == ["Dead Feed: dead"]
+
+
+def test_build_candidates_payload_embeds_limits_from_config(monkeypatch):
+    items = [_item("A", "https://example.com/a", 1)]
+    monkeypatch.setattr(fetch_news, "gather_raw_items", lambda profile, now=None: (items, []))
+
+    config = {"lookback_hours": 24, "min_items": 3, "max_items": 7}
+    payload = fetch_news.build_candidates_payload(
+        "finance_metals", _fake_profile(market_enabled=False), config, seen=set(), now=NOW, fetch_market=False
+    )
+    assert payload["limits"] == {"min_items": 3, "max_items": 7}
+
+
+def test_build_candidates_payload_limits_default_when_config_omits_them(monkeypatch):
+    items = [_item("A", "https://example.com/a", 1)]
+    monkeypatch.setattr(fetch_news, "gather_raw_items", lambda profile, now=None: (items, []))
+
+    config = {"lookback_hours": 24}  # no min_items/max_items at all
+    payload = fetch_news.build_candidates_payload(
+        "finance_metals", _fake_profile(market_enabled=False), config, seen=set(), now=NOW, fetch_market=False
+    )
+    assert payload["limits"] == {"min_items": 5, "max_items": 8}
 
 
 def test_build_candidates_payload_raises_on_zero_candidates(monkeypatch):

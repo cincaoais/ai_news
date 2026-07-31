@@ -94,6 +94,20 @@ def test_bootstrap_state_dir_creates_dir_and_empty_seen_file(tmp_path):
     assert seen_path.read_text(encoding="utf-8") == ""
 
 
+def test_parse_front_matter_valid_text():
+    text = '---\ndate: "2026-07-31"\nprofile: finance_metals\n---\n\n# Digest\n'
+    assert state.parse_front_matter(text) == {"date": "2026-07-31", "profile": "finance_metals"}
+
+
+def test_parse_front_matter_no_front_matter_returns_none():
+    assert state.parse_front_matter("just plain text, no front-matter\n") is None
+
+
+def test_parse_front_matter_malformed_yaml_returns_none():
+    text = "---\n: not: valid: yaml: at: all:\n---\n"
+    assert state.parse_front_matter(text) is None
+
+
 def test_bootstrap_state_dir_exist_ok_does_not_clobber_existing_seen(tmp_path):
     state_dir = tmp_path / "state"
     state_dir.mkdir()

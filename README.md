@@ -74,7 +74,25 @@ step-by-step procedure both schedulers execute.
 Same-day guard note: `build_and_send.py` refuses a second real send for the *same*
 profile on the *same* MYT calendar day (prevents duplicate digests from overlapping
 schedulers or a manual re-run). Switching profiles mid-day is exactly how Slice 5's live
-Routine test avoided tripping that guard against a profile already sent that day.
+Routine test avoided tripping that guard against a profile already sent that day. This
+guard reads this clone's own (possibly stale) copy of `state/last_digest.md` -- it is
+**best-effort**, not a hard guarantee, if two schedulers are deliberately run at once;
+the rule remains **exactly one scheduler active at a time** (see "Scheduler operations"
+below). Two further mechanisms narrow, but don't eliminate, that gap:
+
+- **Pre-send origin re-check**: immediately before the first real send of a run,
+  `build_and_send.py` (if a git `origin` remote is configured) runs `git fetch origin`
+  and re-reads *origin/main*'s own `state/last_digest.md` one more time, aborting like
+  the same-day guard above if it already shows today's profile sent. This shrinks the
+  race window from "however stale this clone/session is" down to the few seconds the
+  fetch takes. Any git/network hiccup here is logged as a warning and the send proceeds
+  -- this check is never allowed to crash a send that would otherwise go through cleanly.
+- **Send-progress resume**: if a real send is interrupted partway through (e.g. Telegram
+  rejects message 3 of 4), `build_and_send.py` records progress in
+  `work/sent_progress.json` after every successfully delivered message. The next run for
+  the same date + profile resumes from the first message *not yet* recorded as sent,
+  rather than re-sending (and duplicating) the whole digest from scratch. The progress
+  file is deleted once the full send completes; `--dry-run` never reads or writes it.
 
 ## Adding a new profile
 
@@ -195,6 +213,16 @@ and notice nothing arrived":
    and *both* the feeds *and* `api.telegram.org` were unreachable), the session's own
    run report on claude.ai still reached the user. Useful, but don't rely on it as a
    designed channel -- it depends on how the failure happened.
+
+**What a `state:`-tagged alert specifically means**: if `update_state.py` fails (its
+commit/push to `state/` didn't go through, even after its rebase-retry), **the digest was
+already sent successfully** -- only the dedup bookkeeping failed to record it. Nothing was
+lost, but tomorrow's run may repeat one or more of today's stories, since
+`state/seen.jsonl` and `state/last_digest.md` were never updated to reflect what just went
+out. The raised error message says this explicitly (`"digest WAS already sent; only the
+dedup state failed to push -- tomorrow's digest may repeat today's stories"`); no urgent
+action is needed beyond eventually resolving whatever blocked the push (e.g. a persistent
+git conflict) before it affects more than one day's dedup.
 
 **If no digest has arrived by 9 AM MYT**, check in this order:
 1. Telegram itself -- muted chat, or the bot blocked.
