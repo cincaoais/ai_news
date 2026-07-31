@@ -1,0 +1,47 @@
+{
+  "profile": "finance_metals",
+  "date": "2026-07-31",
+  "items": [
+    {
+      "index": 0,
+      "summary": "Oil fell as shipping through the Strait of Hormuz recovers, easing the war-risk premium built up after this week's US-Iran strikes -- a sign Middle East tensions are cooling.",
+      "category": "oil"
+    },
+    {
+      "index": 2,
+      "summary": "Gold demand held steady as prices cooled, with central banks stepping up bullion purchases -- a sign institutional buyers see value even as retail interest softens.",
+      "category": "gold"
+    },
+    {
+      "index": 7,
+      "summary": "BOJ held rates at 1% but warned core inflation may top its 2% target, keeping alive bets on a faster hike -- a yen-relevant signal for Asian markets.",
+      "category": "macro"
+    },
+    {
+      "index": 9,
+      "summary": "China's factory activity unexpectedly contracted in July as the export rush that drove Q2 growth faded and typhoons hit output -- a warning sign for global demand.",
+      "category": "macro"
+    },
+    {
+      "index": 25,
+      "summary": "US stock futures extended their rally as strong Big Tech earnings reignited the AI trade -- a bullish signal for risk appetite heading into the next trading session.",
+      "category": "markets"
+    },
+    {
+      "index": 27,
+      "summary": "US borrowing costs hit a 19-year high even as the Fed held interest rates steady -- a sign bond markets are pricing in persistent inflation risk, not the cuts investors hoped for.",
+      "category": "macro"
+    },
+    {
+      "index": 33,
+      "summary": "SK Hynix shares surged 25% and Samsung jumped over 20% as the AI-driven chip rally roared back -- a bellwether for global tech and Malaysia's own electronics exporters.",
+      "category": "markets"
+    },
+    {
+      "index": 35,
+      "summary": "Gold surged nearly 2% to reclaim $4,100 after the Fed held rates steady and Middle East tensions flared -- underscoring gold's safe-haven pull whenever policy or geopolitical risk rises.",
+      "category": "gold"
+    }
+  ],
+  "skipped_as_repeat": []
+}

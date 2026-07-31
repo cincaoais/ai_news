@@ -5,8 +5,8 @@ Phase 3 · Sequential mode · Plan: `docs/02-PLAN.md` (approved 2026-07-31, 1 re
 | Slice | Agent role | Status | Test evidence | Follow-ups |
 |---|---|---|---|---|
 | 1 — Config + fetcher | Sonnet coder | ✅ DONE 2026-07-31 (commit a615ae0) | 41 unit + 1 live smoke passed; commander re-ran: 41 passed | date-tz → S2; gnews locale → S6 |
-| 2 — Telegram out + state | Sonnet coder | DISPATCHED 2026-07-31 | — | includes MYT date fix |
-| 3 — Claude editorial step | Sonnet coder | pending | — | — |
+| 2 — Telegram out + state | Sonnet coder | ✅ DONE 2026-07-31 (commit 5428498) | 113 passed (53 new + all prior); commander re-ran: 113 passed; dry-run HTML demo verified | tzdata dep added; real send deferred to Checkpoint A |
+| 3 — Claude editorial step | Sonnet coder + commander takeover | ✅ DONE 2026-07-31 (provisional per plan: cloud parity pending S4/S5) | 131 passed (commander-run); live claude -p Sonnet run → valid 8-item selection; dry-run digest EXIT=0; mock path EXIT=0 | mock-mode stale-index quirk → Phase 4 |
 | 4 — Actions fallback workflow | Sonnet coder | pending | — | Checkpoint B first |
 | 5 — Routine setup + live validation | Commander | pending | — | Checkpoints A–C |
 | 6 — Ops hardening + docs | Sonnet coder | pending | — | — |
@@ -31,3 +31,34 @@ to Asia/Kuala_Lumpur (UTC date breaks the same-day guard for the 23:47 UTC fallb
 ### 2026-07-31 — Slice 2 dispatched
 Assignment: lib/telegram.py, build_and_send.py, update_state.py, notify_failure.py,
 get_chat_id.py, same-day guard (MYT), push-retry, validation, tests.
+
+### 2026-07-31 — Slice 2 verified & accepted (commit 5428498)
+Evidence: agent pasted 113-passed pytest + dry-run HTML demo (tag-balanced, 1970 utf16
+chars); commander re-ran suite (113 passed) and spot-read validate_selection (URL
+substrings hard-reject on summary+category; display URLs only from candidates). Accepted
+deviations: Windows console UTF-8 fix; consistent market-line rule; profile-mismatch
+check; script-to-script import for validation reuse; "Quiet news day." literal; tzdata
+added to requirements (fresh-Windows-venv fix). Deferred (Checkpoint A): live send,
+real getUpdates, GitHub push, live notifier.
+
+### 2026-07-31 — Slice 3 dispatched
+Assignment: CLAUDE.md editorial rules + selection schema, RUNBOOK.md, run_digest.py
+wrapper (claude -p subprocess, prose-tolerant JSON extraction, one retry, limit-hit
+detection, --mock-claude), tests + live dev-machine run.
+
+### 2026-07-31 — Slice 3 verified & accepted; commander takeover of final verification
+Coder authored all files + tests but stalled in a wait-loop collecting its own live-run
+evidence (2 nudges, no recovery) → commander completed verification per the two-strikes
+rule and committed. Evidence (all commander-run): pytest 131 passed; live `claude -p`
+(Sonnet) produced a schema-valid 8-item selection.json — grounded summaries, why-it-matters
+framing, MY relevance, zero URLs; `build_and_send.py --dry-run` on that real selection:
+EXIT=0, 2 tag-balanced messages; mock path EXIT=0. CLAUDE.md/RUNBOOK.md reviewed — scoped,
+schema-exact, hard rules present. Notifier path observed firing stage-tagged
+("editorial:") with graceful no-token degradation.
+Known quirk logged for Phase 4: in --mock-claude mode the wrapper re-fetches candidates,
+so a fixture selection's indices can pair with shifted articles (headline/summary
+mismatch). Structurally impossible in production (selection is authored against same-run
+candidates; RUNBOOK never re-fetches between steps) — mock-mode cosmetic only.
+Environment note: `gh` CLI not installed → Checkpoint B (repo creation/push) is
+user-blocked; Slice 4 will author + locally validate everything, on-GitHub mock dispatch
+deferred until Checkpoint B.
