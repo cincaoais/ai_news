@@ -75,3 +75,16 @@ enables Slice 4's on-GitHub gate + soak test. Then Slice 5 (Routine, commander-l
 Checkpoint C), Slice 6, Phase 4.
 Resume point for a fresh session: read this log top to bottom; next action = user
 checkpoints, then Slice 5 per docs/02-PLAN.md.
+
+### 2026-07-31 — Slice 3 coder's late report (post-takeover) — corroborates acceptance
+The stalled coder recovered after commit 7593551 and confirmed committed content is
+byte-identical to its final files (no duplicate commit, no destructive ops). New facts it
+reported: (1) it found+fixed a real bug pre-commit — run_digest.py's --dry-run path never
+printed the digest; fix + regression test were captured in 7593551 (the 19th test);
+(2) a second full live run: 7 items, max summary 137/200 chars, 0 URL substrings, first
+attempt, no retry — two-for-two Sonnet first-attempt successes; (3) --allowedTools is
+"Read,Write" (tighter than the plan sketch's Read,Write,Bash — intentional: the editorial
+step needs no shell; the Routine path gets shell from RUNBOOK anyway); (4) 200-char rule in
+CLAUDE.md under Slice 2's 300-char validator ceiling is intentional layering.
+Correction to its report: tests/fixtures/mock_selection.json is NOT an orphan — commander
+authored it; digest.yml's mock path references it.
