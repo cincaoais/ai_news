@@ -9,7 +9,7 @@ Phase 3 · Sequential mode · Plan: `docs/02-PLAN.md` (approved 2026-07-31, 1 re
 | 3 — Claude editorial step | Sonnet coder + commander takeover | ✅ DONE 2026-07-31 (provisional per plan: cloud parity pending S4/S5) | 131 passed (commander-run); live claude -p Sonnet run → valid 8-item selection; dry-run digest EXIT=0; mock path EXIT=0 | mock-mode stale-index quirk → Phase 4 |
 | 4 — Actions fallback workflow | Sonnet coder | ✅ AUTHORED 2026-07-31 (commit ed06165); on-GitHub gate deferred to Checkpoint B | actionlint exit 0; 133 passed (commander re-ran: 133); local mock run exit 0 | [skip ci] added to update_state; soak test pending |
 | 5 — Routine setup + live validation | Commander | ✅ LIVE 2026-07-31 (trig_01M98TDSfUSwiTczPxc7ggUU) | Cloud run cse_014b…: sports digest delivered to Telegram; state commit 16d1387 pushed to origin/main by the cloud session | 3-consecutive-runs observation ongoing; connector-strip deferred (see entry) |
-| 6 — Ops hardening + docs | Sonnet coder | pending | — | — |
+| 6 — Ops hardening + docs | Sonnet coder | ✅ DONE 2026-07-31 (commit 78ec63e) | 161 passed (commander re-ran: 161); actionlint exit 0; footer demo rendered | watchdog on-GitHub dispatch pending |
 
 ## Log entries
 
@@ -107,6 +107,28 @@ API): allowed_tools excludes their tools and the runbook forbids improvising; st
 doc-recommended hygiene but unverified against the auto-attached Claude_Code_Remote infra
 connector — do NOT strip blind before a scheduled run; do it on a controlled Run-now day.
 Recorded in README backlog + Phase 4 known-remaining.
+
+### 2026-07-31 (evening) — Slice 6 verified & accepted (commit 78ec63e); PHASE 3 COMPLETE
+[Backfilled entry — the conformance reviewer correctly flagged this log as stale.]
+Evidence: coder pasted 161-passed pytest + actionlint v1.7.12 exit 0 on both workflows +
+a rendered feed-warnings footer demo; commander re-ran suite (161 passed) and reviewed the
+commit before pushing. Delivered: watchdog.yml (Telegram-independent alert channel),
+feed_warnings → footer pipeline, per-profile gnews_locale (malaysia_politics = MY),
+operator README. Coder also legitimately fixed 2 pre-existing tests that had begun
+depending on the dev machine's now-populated .env (loader neutralized in those tests only).
+CLAUDE.md weekend rule verified already present. Phase 3 closed; Phase 4 opened.
+
+### 2026-07-31 (evening) — Phase 4 in progress
+Scenario walkthroughs run by commander (same-day guard block + --force override +
+dead-creds loud 401 + BOM discovery). Three parallel fresh-eyes reviews (correctness,
+security, conformance) returned: 1 CRITICAL (href quote-escaping) + 1 CRITICAL-class race
+(same-day guard check-then-act across clones) + 3 MAJOR security/correctness + minors.
+Fix pass dispatched (F1-F10, one commit). Conformance audit vs LIVE GitHub/Routine state
+found: TELEGRAM_CHAT_ID repo secret missing (commander set it via gh 08:31Z — all 3
+secrets now present), both workflows never dispatched on GitHub (queued after fix push),
+README inaccuracies (RUNBOOK both-schedulers claim; secrets table) queued into fix pass /
+post-fix edit. Remaining time-gated DoD items: 3 consecutive scheduled runs (~Aug 3),
+48-h soak (starts at first real dispatch), cross-day dedup observation (Aug 1).
 
 ### 2026-07-31 (afternoon) — Checkpoints A+B complete; FIRST REAL DIGEST DELIVERED
 User completed: BotFather bot + /start; .env token paste (commander added .env support,
