@@ -192,7 +192,11 @@ def run(
     headlines = [item["title"] for item in items]
     state.write_last_digest(state_dir / "last_digest.md", date=today, profile=profile, headlines=headlines)
 
-    git_commit_and_push(repo_root, f"state: digest {today}")
+    # [skip ci] guard: the Actions fallback workflow (Slice 4) triggers on
+    # workflow_dispatch/cron, not on pushes, but GitHub still evaluates
+    # `push`-triggered workflows against any commit -- this marker keeps a
+    # state-only commit from ever re-triggering CI on its own.
+    git_commit_and_push(repo_root, f"state: digest {today} [skip ci]")
 
     return {"appended": len(items), "pruned": pruned, "date": today, "profile": profile}
 

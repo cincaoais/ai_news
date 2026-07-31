@@ -307,3 +307,34 @@ def test_git_commit_and_push_retries_after_rejected_push(tmp_path):
     assert "other push" in log.stdout
     assert "state: digest 2026-08-01" in log.stdout
     assert (work / "state" / "other_marker.md").exists()  # rebase pulled in the other commit's file too
+
+
+def test_run_commit_message_has_skip_ci_guard(tmp_path):
+    """update_state.run()'s own commit message must contain `[skip ci]` --
+    otherwise a state-only commit pushed by the Actions fallback (Slice 4)
+    could re-trigger a push-triggered workflow on itself."""
+    repo = tmp_path / "repo"
+    _init_local_repo(repo, email="dev@example.com", name="Dev")
+    (repo / "state").mkdir()
+    (repo / "state" / "seen.jsonl").write_text("", encoding="utf-8")
+    _git("add", "state/", cwd=repo)
+    _git("commit", "-m", "initial", cwd=repo)
+
+    work_dir = repo / "work"
+    candidates = {
+        "profile": "finance_metals",
+        "items": [{
+            "index": 0, "title": "Headline A", "source": "Src",
+            "url": "https://example.com/a", "published": "2026-07-31T00:00:00+00:00", "snippet": "s",
+        }],
+    }
+    selection = {"items": [{"index": 0, "summary": "Fine summary."}]}
+    _write_json(work_dir / "candidates.json", candidates)
+    _write_json(work_dir / "selection.json", selection)
+    _write_json(work_dir / "sent.json", {"message_ids": [1], "sent_at": "2026-07-31T04:00:00+00:00"})
+
+    us.run(work_dir=work_dir, state_dir=repo / "state", repo_root=repo, now=NOW)
+
+    log = _git("log", "-1", "--pretty=%s", cwd=repo)
+    assert "[skip ci]" in log.stdout
+    assert "state: digest 2026-07-31" in log.stdout
