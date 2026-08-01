@@ -53,6 +53,14 @@ class UpdateStateError(RuntimeError):
     work/sent.json, or a git push that fails even after rebase-retry)."""
 
 
+# The branch state commits land on. The Routine's scheduled cloud env can
+# check the repo out at a pinned SHA (detached HEAD, seen live 2026-08-01),
+# where a bare `git push` / `git pull --rebase` both die with "You are not
+# currently on a branch" -- so every push/pull below names the remote and
+# branch explicitly instead of relying on a current branch or upstream.
+STATE_BRANCH = "main"
+
+
 # ---------------------------------------------------------------------------
 # Deriving the sent items
 # ---------------------------------------------------------------------------
@@ -139,9 +147,11 @@ def _has_remote(repo_root: Path) -> bool:
 
 
 def git_commit_and_push(repo_root: Path, message: str) -> None:
-    """Stage state/, commit (no-op if nothing changed), and push.
+    """Stage state/, commit (no-op if nothing changed), and push HEAD to
+    origin's state branch with an explicit refspec (safe from detached HEAD).
 
-    On a rejected push: `git pull --rebase`, then retry the push once. If
+    On a rejected push: `git pull --rebase origin <branch>`, then retry the
+    push once. If
     there is no remote configured at all (dev machine, before Checkpoint B),
     skip the push cleanly (log only) -- this is not an error.
 
@@ -166,18 +176,21 @@ def git_commit_and_push(repo_root: Path, message: str) -> None:
         logger.info("no git remote configured -- skipping push (dev machine; remote comes at Checkpoint B)")
         return
 
-    push = subprocess.run(["git", "push"], cwd=repo_root, capture_output=True, text=True)
+    push_args = ["git", "push", "origin", f"HEAD:{STATE_BRANCH}"]
+    push = subprocess.run(push_args, cwd=repo_root, capture_output=True, text=True)
     if push.returncode == 0:
         return
 
     logger.warning("git push rejected, attempting pull --rebase then one retry: %s", push.stderr.strip())
-    rebase = subprocess.run(["git", "pull", "--rebase"], cwd=repo_root, capture_output=True, text=True)
+    rebase = subprocess.run(
+        ["git", "pull", "--rebase", "origin", STATE_BRANCH], cwd=repo_root, capture_output=True, text=True,
+    )
     if rebase.returncode != 0:
         raise UpdateStateError(
             f"git pull --rebase failed after a rejected push: {rebase.stderr.strip()}. {STATE_PUSH_FAILURE_NOTE}"
         )
 
-    retry_push = subprocess.run(["git", "push"], cwd=repo_root, capture_output=True, text=True)
+    retry_push = subprocess.run(push_args, cwd=repo_root, capture_output=True, text=True)
     if retry_push.returncode != 0:
         raise UpdateStateError(
             f"git push failed even after pull --rebase retry: {retry_push.stderr.strip()}. {STATE_PUSH_FAILURE_NOTE}"

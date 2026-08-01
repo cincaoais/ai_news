@@ -585,6 +585,82 @@ def test_git_commit_and_push_conflicting_rebase_raises_honest_state_failure_mess
     assert "tomorrow's digest may repeat today's stories" in str(excinfo.value)
 
 
+def test_git_commit_and_push_works_from_detached_head(tmp_path):
+    """2026-08-01 incident: the Routine's scheduled cloud env had the repo
+    checked out at a pinned SHA (detached HEAD). A bare `git push` there dies
+    with "You are not currently on a branch" and a bare `git pull --rebase`
+    cannot recover either -- state must be pushed with an explicit refspec
+    that never depends on a current branch or upstream config."""
+    remote = tmp_path / "remote_detached.git"
+    _git("init", "--bare", str(remote), cwd=tmp_path)
+
+    seed = tmp_path / "seed_repo"
+    _init_local_repo(seed, email="dev@example.com", name="Dev")
+    (seed / "state").mkdir()
+    (seed / "state" / "seen.jsonl").write_text("", encoding="utf-8")
+    _git("add", "state/", cwd=seed)
+    _git("commit", "-m", "initial", cwd=seed)
+    _git("branch", "-M", "main", cwd=seed)
+    _git("remote", "add", "origin", str(remote), cwd=seed)
+    _git("push", "-u", "origin", "main", cwd=seed)
+
+    work = tmp_path / "detached_clone"
+    _git("clone", "--branch", "main", str(remote), str(work), cwd=tmp_path)
+    _git("config", "user.email", "runner@example.com", cwd=work)
+    _git("config", "user.name", "Runner", cwd=work)
+    _git("checkout", "--detach", cwd=work)
+
+    (work / "state" / "seen.jsonl").write_text('{"url": "https://example.com/today"}\n', encoding="utf-8")
+
+    us.git_commit_and_push(work, "state: digest 2026-08-01")  # must not raise
+
+    remote_log = _git("log", "--oneline", "main", cwd=remote)
+    assert "state: digest 2026-08-01" in remote_log.stdout
+
+
+def test_git_commit_and_push_detached_head_recovers_from_rejected_push(tmp_path):
+    """Detached HEAD *and* behind origin/main: the explicit-refspec push is
+    rejected (non-fast-forward), and the recovery pull/rebase must also work
+    without a current branch before the one push retry."""
+    remote = tmp_path / "remote_detached_behind.git"
+    _git("init", "--bare", str(remote), cwd=tmp_path)
+
+    seed = tmp_path / "seed_repo_behind"
+    _init_local_repo(seed, email="dev@example.com", name="Dev")
+    (seed / "state").mkdir()
+    (seed / "state" / "seen.jsonl").write_text("", encoding="utf-8")
+    _git("add", "state/", cwd=seed)
+    _git("commit", "-m", "initial", cwd=seed)
+    _git("branch", "-M", "main", cwd=seed)
+    _git("remote", "add", "origin", str(remote), cwd=seed)
+    _git("push", "-u", "origin", "main", cwd=seed)
+
+    work = tmp_path / "detached_clone_behind"
+    _git("clone", "--branch", "main", str(remote), str(work), cwd=tmp_path)
+    _git("config", "user.email", "runner@example.com", cwd=work)
+    _git("config", "user.name", "Runner", cwd=work)
+    _git("checkout", "--detach", cwd=work)
+
+    # Someone else lands a commit to a DIFFERENT file first, so `work`'s push
+    # is rejected (non-fast-forward) but its rebase is conflict-free.
+    other = tmp_path / "other_clone_behind"
+    _git("clone", "--branch", "main", str(remote), str(other), cwd=tmp_path)
+    _git("config", "user.email", "other@example.com", cwd=other)
+    _git("config", "user.name", "Other", cwd=other)
+    (other / "state" / "other_marker.md").write_text("from the other clone\n", encoding="utf-8")
+    _git("add", "state/", cwd=other)
+    _git("commit", "-m", "other push", cwd=other)
+    _git("push", cwd=other)
+
+    (work / "state" / "seen.jsonl").write_text('{"url": "https://example.com/mine"}\n', encoding="utf-8")
+
+    us.git_commit_and_push(work, "state: digest 2026-08-01")  # must not raise
+
+    remote_log = _git("log", "--oneline", "main", cwd=remote)
+    assert "state: digest 2026-08-01" in remote_log.stdout
+    assert "other push" in remote_log.stdout
+
+
 def test_run_commit_message_has_skip_ci_guard(tmp_path):
     """update_state.run()'s own commit message must contain `[skip ci]` --
     otherwise a state-only commit pushed by the Actions fallback (Slice 4)
