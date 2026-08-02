@@ -1,15 +1,14 @@
 ---
-date: "2026-08-01"
+date: "2026-08-02"
 profile: finance_metals
 ---
 
-# Digest 2026-08-01 (finance_metals)
+# Digest 2026-08-02 (finance_metals)
 
-- Warsh raised changing frequency of Fed policy meetings, NYT reports - Reuters
-- Bond sell-off sent warning on Federal Reserve’s credibility, says top central bank official - Financial Times
-- Fed dissenters warn against delaying higher interest rates - The Washington Post
-- Gold prices in July snap four-month losing streak, helped by weaker dollar - Investing.com India
-- Gold Prices Stall Near $4,000, but Miners’ Record Cash Flow Tells a Different Story - NAI500
-- US Indices End Week Higher As Amazon Earnings Lift Sentiment, But Nasdaq Logs Worst Month In Over A Year — PSKY, BABA, RDDT, RIVN, AMZN In Focus - TradingView
-- Wall St Week Ahead Teetering US stock market faces jobs report, big earnings week - Reuters
-- Ferguson Enterprises Set to Join S&P 500 and ADI Global Distribution to Join S&P SmallCap 600 - Yahoo Finance
+- Wall Street Ends Higher Ahead of Key Jobs Data That Could Challenge Big-Tech Gains - ts2.tech
+- S&P 500 Earnings Growth Hits 47.4%, Best Since 2021 - ExxonMobil Holdings (NYSE:XOM), NVIDIA (NASDAQ:NVDA - Benzinga
+- US Treasury intervenes to support yen after Japan steps in, FT reports - Reuters
+- Gold Price Forecast: XAU/USD Poised for August Breakout After Six Weeks of Consolidation - FOREX.com
+- Amazon Raised 2026 CapEx by $20 Billion— but CEO Andy Jassy Won't Say How It's Paying for It: 'Nothing to Share...'
+- President Donald Trump Just Threw the Federal Reserve Under the Bus Yet Again Over Interest Rates - AOL.com
+- Warren Buffett's Berkshire Could Buy Almost Any S&P 500 Company With Its $397 Billion Cash Pile, but Keeps Waiting for a Better Price
