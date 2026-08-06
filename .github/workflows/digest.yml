@@ -1,12 +1,13 @@
-name: Daily digest (Actions fallback)
+name: Daily digest (Actions scheduler)
 
-# This workflow is the FALLBACK scheduler (docs/02-PLAN.md). The PRIMARY
-# scheduler is a Claude Code Routine on the user's account (Slice 5) that
-# follows RUNBOOK.md directly. This workflow instead drives the pipeline
-# via scripts/run_digest.py, which shells out to `claude -p` itself --
-# NOT anthropics/claude-code-action (blocks WebSearch/WebFetch, action#690),
-# NOT `--bare` (incompatible with an OAuth token), and ANTHROPIC_API_KEY must
-# NEVER be set here (it would outrank CLAUDE_CODE_OAUTH_TOKEN).
+# PRIMARY scheduler since 2026-08: the Claude Code Routine on claude.ai was
+# retired when the user dropped the Claude subscription. This workflow drives
+# the whole pipeline via scripts/run_digest.py, which calls the DeepSeek
+# chat-completions API for the editorial step (deepseek-chat, ~fraction of a
+# cent per run). No Claude Code CLI, no OAuth token, no claude.ai dependency.
+# The editorial rules live in CLAUDE.md, which run_digest.py embeds verbatim
+# into the API prompt. The Telegram-independent watchdog
+# (.github/workflows/watchdog.yml) stays as the second alert channel.
 
 on:
   workflow_dispatch:
@@ -14,7 +15,7 @@ on:
       mock:
         description: >-
           Use --mock-claude with tests/fixtures/mock_selection.json instead of invoking
-          the real claude CLI. Needs no secrets. Forces --dry-run and --skip-state
+          the real LLM API. Needs no secrets. Forces --dry-run and --skip-state
           regardless of the dry_run input below.
         type: boolean
         default: true
@@ -25,22 +26,13 @@ on:
         type: boolean
         default: true
 
-  # Dormant fallback cron -- commented out on purpose. This workflow is not
-  # declared usable until Slice 4's test gate is fully green: a green mock
-  # workflow_dispatch run on GitHub, actionlint/YAML validation, AND the 48-h
-  # token soak test (a real dispatch with CLAUDE_CODE_OAUTH_TOKEN at T0 and
-  # again at T0+48h, both authenticating). Until then the Claude Code Routine
-  # (Slice 5) is the only active scheduler.
-  #
-  # `47 23 * * *` (UTC) = 07:47 MYT (UTC+8) the next day. Deliberately an
-  # off-the-hour minute, not top-of-hour, per docs/01-RND.md's cron-drift
-  # finding (GitHub Actions schedules queue and can slip several minutes
-  # during platform load spikes, which cluster at :00 across every repo's
-  # cron jobs; an off-hour minute avoids that queueing contention).
-  #
-  # To enable once the soak test is green: uncomment the two lines below.
-  # schedule:
-  #   - cron: "47 23 * * *"
+  schedule:
+    # `47 23 * * *` (UTC) = 07:47 MYT (UTC+8) the next day. Deliberately an
+    # off-the-hour minute, not top-of-hour, per docs/01-RND.md's cron-drift
+    # finding (GitHub Actions schedules queue and can slip several minutes
+    # during platform load spikes, which cluster at :00 across every repo's
+    # cron jobs; an off-hour minute avoids that queueing contention).
+    - cron: "47 23 * * *"
 
 concurrency:
   group: daily-digest
@@ -68,9 +60,6 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
-      - name: Install Claude Code CLI
-        run: npm install -g @anthropic-ai/claude-code
-
       - name: Configure git identity
         run: |
           git config user.name "digest-bot"
@@ -78,16 +67,14 @@ jobs:
 
       - name: Run digest
         env:
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          CLAUDE_CODE_RETRY_WATCHDOG: "1"
         run: |
-          # On a `schedule` trigger (once the cron above is enabled),
-          # inputs.mock/inputs.dry_run are unset -- both compare false below,
-          # so the cron path runs the real, non-mock, non-dry-run pipeline
-          # by design. workflow_dispatch is the only trigger that can set
-          # mock=true or dry_run=true.
+          # On a `schedule` trigger, inputs.mock/inputs.dry_run are unset --
+          # both compare false below, so the cron path runs the real,
+          # non-mock, non-dry-run pipeline by design. workflow_dispatch is
+          # the only trigger that can set mock=true or dry_run=true.
           if [ "${{ inputs.mock }}" = "true" ]; then
             python scripts/run_digest.py --mock-claude tests/fixtures/mock_selection.json --dry-run --skip-state
           elif [ "${{ inputs.dry_run }}" = "true" ]; then

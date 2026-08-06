@@ -1,5 +1,12 @@
 # RUNBOOK: daily digest procedure
 
+> **RETIRED (2026-08)** -- this runbook was the instruction set for the Claude Code
+> Routine (the old primary scheduler), which was retired when the Claude subscription
+> was dropped. The pipeline is now scheduled entirely by GitHub Actions
+> (`.github/workflows/digest.yml`), which drives `scripts/run_digest.py` and the DeepSeek
+> API; this file is kept only as a historical record. The current operator manual is
+> `README.md`.
+
 Exact procedure for a cloud session (Claude Code Routine) with shell access. Follow these
 steps in order. Do not improvise beyond this runbook. All commands run from the repo root.
 

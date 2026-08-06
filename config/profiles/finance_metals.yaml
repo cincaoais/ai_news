@@ -13,5 +13,5 @@ gnews_fallback:                 # Google News RSS pseudo-search; when:1d is REQU
 market_snapshot:
   enabled: true
   symbols: ["^GSPC", "^IXIC", "GC=F", "USDMYR=X"]
-editorial_focus: >              # injected into the Claude prompt for this profile
+editorial_focus: >              # injected into the LLM prompt for this profile
   News that moves US equities and gold/metals; macro & central banks; keep MY relevance in mind.

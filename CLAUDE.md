@@ -1,6 +1,6 @@
 This repository is a daily news digest bot. The rules below govern digest-generation
-runs (both the Claude Code Routine and the GitHub Actions fallback). They do not apply
-to ad-hoc development work on this codebase.
+runs (the scheduled GitHub Actions run and local dev runs). They do not apply to
+ad-hoc development work on this codebase.
 
 ## Role
 

@@ -1,19 +1,19 @@
 """Tests for scripts/run_digest.py: the local/CI wrapper that chains
-fetch_news -> the claude editorial step -> build_and_send -> update_state,
-with every stage's failure routed through notify_failure.py (stage-tagged)
-before a nonzero exit.
+fetch_news -> the LLM editorial step (DeepSeek API call) -> build_and_send ->
+update_state, with every stage's failure routed through notify_failure.py
+(stage-tagged) before a nonzero exit.
 
-Subprocess is mocked completely -- no real `claude` invocation happens in
-this suite (see docs/03-EXECUTION-LOG.md's Slice 3 live-gate section for the
-one real run, done manually outside pytest)."""
+The LLM call (_call_llm) is mocked completely -- no real DeepSeek API
+invocation happens in this suite. _call_llm's own HTTP layer is tested
+separately below with a fake requests.post response."""
 
 from __future__ import annotations
 
 import json
-import subprocess
 from pathlib import Path
 
 import pytest
+import requests
 
 import build_and_send
 import run_digest as rd
@@ -53,10 +53,17 @@ def _valid_selection(profile="finance_metals"):
     }
 
 
-class _FakeCompletedProcess:
-    def __init__(self, stdout: str = "", returncode: int = 0):
-        self.stdout = stdout
-        self.returncode = returncode
+class _FakeHTTPResponse:
+    """Stand-in for requests.Response in _call_llm tests."""
+
+    def __init__(self, status_code: int = 200, json_data=None):
+        self.status_code = status_code
+        self._json_data = json_data
+
+    def json(self):
+        if self._json_data is None:
+            raise ValueError("no json body")
+        return self._json_data
 
 
 @pytest.fixture(autouse=True)
@@ -82,7 +89,7 @@ def test_happy_path_runs_all_four_stages_in_order(tmp_path, monkeypatch, _notifi
         calls.append("fetch")
         return {"profile": "finance_metals"}
 
-    def fake_editorial(*, profile, work_dir, repo_root, mock_claude=None, timeout=900):
+    def fake_editorial(*, profile, work_dir, repo_root, state_dir=None, mock_claude=None, timeout=900):
         calls.append("editorial")
         return _valid_selection()
 
@@ -230,23 +237,25 @@ def test_state_stage_failure_notifies_state_tag(tmp_path, monkeypatch, _notifier
 
 
 # ---------------------------------------------------------------------------
-# run_editorial_step: retry, prose-tolerant parsing, limit-hit, timeout,
-# --mock-claude, stale-file deletion
+# run_editorial_step: retry, prose-tolerant parsing, API-error, timeout,
+# --mock-claude, stale-file deletion, prompt contents
 # ---------------------------------------------------------------------------
 
-def test_editorial_step_missing_selection_retries_once_then_notifies(tmp_path, monkeypatch):
+def test_editorial_step_invalid_output_retries_once_then_notifies(tmp_path, monkeypatch):
+    """The model's reply is not valid JSON on both attempts -> one retry
+    (with the error appended) then EditorialError, never a send."""
     work_dir = tmp_path / "work"
     _write_json(work_dir / "candidates.json", _candidates())
 
     call_count = {"n": 0}
 
-    def fake_run(cmd, **kwargs):
+    def fake_call_llm(prompt, timeout):
         call_count["n"] += 1
-        return _FakeCompletedProcess(stdout=json.dumps({"result": "done, but forgot to write the file"}))
+        return "I could not find any relevant news today."
 
-    monkeypatch.setattr(rd.subprocess, "run", fake_run)
+    monkeypatch.setattr(rd, "_call_llm", fake_call_llm)
 
-    with pytest.raises(rd.EditorialError, match="was not written"):
+    with pytest.raises(rd.EditorialError, match="still invalid after one retry"):
         rd.run_editorial_step(profile="finance_metals", work_dir=work_dir, repo_root=tmp_path)
 
     assert call_count["n"] == 2  # first attempt + exactly one retry
@@ -262,48 +271,44 @@ def test_editorial_step_prose_wrapped_json_parses_and_validates(tmp_path, monkey
         + "\n```\n\nLet me know if you need anything else!"
     )
 
-    def fake_run(cmd, **kwargs):
-        (work_dir / "selection.json").write_text(prose_wrapped, encoding="utf-8")
-        return _FakeCompletedProcess(stdout=json.dumps({"result": "ok"}))
-
-    monkeypatch.setattr(rd.subprocess, "run", fake_run)
+    monkeypatch.setattr(rd, "_call_llm", lambda prompt, timeout: prose_wrapped)
 
     selection = rd.run_editorial_step(profile="finance_metals", work_dir=work_dir, repo_root=tmp_path)
 
     assert selection["items"][0]["index"] == 0
 
 
-def test_editorial_step_usage_limit_hit_raises_distinct_message_no_retry(tmp_path, monkeypatch):
+def test_editorial_step_api_error_raises_immediately_no_retry(tmp_path, monkeypatch):
+    """A hard API failure (e.g. insufficient balance) is non-retryable:
+    raise immediately, never retry with the error appended to the prompt."""
     work_dir = tmp_path / "work"
     _write_json(work_dir / "candidates.json", _candidates())
 
     call_count = {"n": 0}
 
-    def fake_run(cmd, **kwargs):
+    def fake_call_llm(prompt, timeout):
         call_count["n"] += 1
-        return _FakeCompletedProcess(
-            stdout=json.dumps({"result": "You've hit your Max plan limit · resets 4pm"})
-        )
+        raise rd.EditorialError("LLM API error 402: Insufficient Balance")
 
-    monkeypatch.setattr(rd.subprocess, "run", fake_run)
+    monkeypatch.setattr(rd, "_call_llm", fake_call_llm)
 
-    with pytest.raises(rd.EditorialError, match="(?i)usage limit"):
+    with pytest.raises(rd.EditorialError, match="402"):
         rd.run_editorial_step(profile="finance_metals", work_dir=work_dir, repo_root=tmp_path)
 
-    assert call_count["n"] == 1  # no point retrying an exhausted quota
+    assert call_count["n"] == 1
 
 
-def test_editorial_step_timeout_raises_and_does_not_retry(tmp_path, monkeypatch):
+def test_editorial_step_timeout_raises_immediately_no_retry(tmp_path, monkeypatch):
     work_dir = tmp_path / "work"
     _write_json(work_dir / "candidates.json", _candidates())
 
     call_count = {"n": 0}
 
-    def fake_run(cmd, **kwargs):
+    def fake_call_llm(prompt, timeout):
         call_count["n"] += 1
-        raise subprocess.TimeoutExpired(cmd=cmd, timeout=900)
+        raise rd.EditorialError("LLM API request failed: timed out after 900s")
 
-    monkeypatch.setattr(rd.subprocess, "run", fake_run)
+    monkeypatch.setattr(rd, "_call_llm", fake_call_llm)
 
     with pytest.raises(rd.EditorialError, match="timed out"):
         rd.run_editorial_step(profile="finance_metals", work_dir=work_dir, repo_root=tmp_path)
@@ -311,17 +316,17 @@ def test_editorial_step_timeout_raises_and_does_not_retry(tmp_path, monkeypatch)
     assert call_count["n"] == 1
 
 
-def test_mock_claude_bypasses_subprocess_entirely(tmp_path, monkeypatch):
+def test_mock_claude_bypasses_llm_call_entirely(tmp_path, monkeypatch):
     work_dir = tmp_path / "work"
     _write_json(work_dir / "candidates.json", _candidates())
 
     fixture_path = tmp_path / "fixture_selection.json"
     fixture_path.write_text(json.dumps(_valid_selection()), encoding="utf-8")
 
-    def should_not_be_called(cmd, **kwargs):
-        raise AssertionError("subprocess.run must not be called under --mock-claude")
+    def should_not_be_called(prompt, timeout):
+        raise AssertionError("_call_llm must not be called under --mock-claude")
 
-    monkeypatch.setattr(rd.subprocess, "run", should_not_be_called)
+    monkeypatch.setattr(rd, "_call_llm", should_not_be_called)
 
     selection = rd.run_editorial_step(
         profile="finance_metals", work_dir=work_dir, repo_root=tmp_path, mock_claude=fixture_path,
@@ -331,7 +336,7 @@ def test_mock_claude_bypasses_subprocess_entirely(tmp_path, monkeypatch):
     assert (work_dir / "selection.json").read_text(encoding="utf-8") == fixture_path.read_text(encoding="utf-8")
 
 
-def test_stale_selection_json_deleted_before_every_claude_invocation(tmp_path, monkeypatch):
+def test_stale_selection_json_deleted_before_every_llm_call(tmp_path, monkeypatch):
     work_dir = tmp_path / "work"
     _write_json(work_dir / "candidates.json", _candidates())
     selection_path = work_dir / "selection.json"
@@ -339,11 +344,11 @@ def test_stale_selection_json_deleted_before_every_claude_invocation(tmp_path, m
 
     missing_at_call_time = []
 
-    def fake_run(cmd, **kwargs):
+    def fake_call_llm(prompt, timeout):
         missing_at_call_time.append(not selection_path.exists())
-        return _FakeCompletedProcess(stdout=json.dumps({"result": "did not write anything"}))
+        return "not valid json at all"
 
-    monkeypatch.setattr(rd.subprocess, "run", fake_run)
+    monkeypatch.setattr(rd, "_call_llm", fake_call_llm)
 
     with pytest.raises(rd.EditorialError):
         rd.run_editorial_step(profile="finance_metals", work_dir=work_dir, repo_root=tmp_path)
@@ -357,24 +362,150 @@ def test_editorial_step_validation_error_appends_to_retry_prompt(tmp_path, monke
 
     prompts_seen = []
 
-    def fake_run(cmd, **kwargs):
-        prompt = cmd[cmd.index("-p") + 1]
+    def fake_call_llm(prompt, timeout):
         prompts_seen.append(prompt)
         if len(prompts_seen) == 1:
             # first attempt: references an unknown index -> validation error
             bad_selection = {"items": [{"index": 99, "summary": "bad"}]}
-            (work_dir / "selection.json").write_text(json.dumps(bad_selection), encoding="utf-8")
-        else:
-            (work_dir / "selection.json").write_text(json.dumps(_valid_selection()), encoding="utf-8")
-        return _FakeCompletedProcess(stdout=json.dumps({"result": "ok"}))
+            return json.dumps(bad_selection)
+        return json.dumps(_valid_selection())
 
-    monkeypatch.setattr(rd.subprocess, "run", fake_run)
+    monkeypatch.setattr(rd, "_call_llm", fake_call_llm)
 
     selection = rd.run_editorial_step(profile="finance_metals", work_dir=work_dir, repo_root=tmp_path)
 
     assert selection["items"][0]["index"] == 0
     assert len(prompts_seen) == 2
     assert "99" in prompts_seen[1]  # the retry prompt names the validation error
+
+
+def test_editorial_step_prompt_embeds_candidates_last_digest_and_focus(tmp_path, monkeypatch):
+    """The API model cannot read files, so the prompt must carry everything
+    inline: candidates.json, last_digest.md, and the profile's
+    editorial_focus from config/profiles/<profile>.yaml."""
+    work_dir = tmp_path / "work"
+    state_dir = tmp_path / "state"
+    _write_json(work_dir / "candidates.json", _candidates())
+
+    last_digest_path = state_dir / "last_digest.md"
+    last_digest_path.parent.mkdir(parents=True, exist_ok=True)
+    last_digest_path.write_text(
+        "---\ndate: \"2026-07-30\"\nprofile: finance_metals\n---\n\n# Digest 2026-07-30 (finance_metals)\n\n- Old headline A\n",
+        encoding="utf-8",
+    )
+
+    profile_path = tmp_path / "config" / "profiles" / "finance_metals.yaml"
+    profile_path.parent.mkdir(parents=True, exist_ok=True)
+    profile_path.write_text("editorial_focus: >\n  Gold, US stocks, and macro moves matter most.\n", encoding="utf-8")
+
+    captured = {}
+
+    def fake_call_llm(prompt, timeout):
+        captured["prompt"] = prompt
+        return json.dumps(_valid_selection())
+
+    monkeypatch.setattr(rd, "_call_llm", fake_call_llm)
+
+    rd.run_editorial_step(
+        profile="finance_metals", work_dir=work_dir, repo_root=tmp_path, state_dir=state_dir,
+    )
+
+    prompt = captured["prompt"]
+    assert "Headline A" in prompt          # candidates embedded
+    assert "Headline B" in prompt
+    assert "# Digest 2026-07-30" in prompt  # yesterday's digest embedded (soft dedup)
+    assert "Old headline A" in prompt
+    assert "Gold, US stocks, and macro moves matter most." in prompt  # editorial focus embedded
+    assert "work/candidates.json (profile=finance_metals)" in prompt
+
+
+def test_editorial_step_prompt_handles_missing_last_digest(tmp_path, monkeypatch):
+    work_dir = tmp_path / "work"
+    _write_json(work_dir / "candidates.json", _candidates())
+
+    captured = {}
+
+    def fake_call_llm(prompt, timeout):
+        captured["prompt"] = prompt
+        return json.dumps(_valid_selection())
+
+    monkeypatch.setattr(rd, "_call_llm", fake_call_llm)
+
+    rd.run_editorial_step(profile="finance_metals", work_dir=work_dir, repo_root=tmp_path)
+
+    assert "(no previous digest yet -- first run)" in captured["prompt"]
+
+
+# ---------------------------------------------------------------------------
+# _call_llm: the DeepSeek HTTP layer
+# ---------------------------------------------------------------------------
+
+def test_call_llm_success(monkeypatch):
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
+    captured = {}
+
+    def fake_post(url, **kwargs):
+        captured["url"] = url
+        captured.update(kwargs)
+        return _FakeHTTPResponse(json_data={"choices": [{"message": {"content": '{"items": []}'}}]})
+
+    monkeypatch.setattr(rd.requests, "post", fake_post)
+
+    assert rd._call_llm("prompt text", timeout=30) == '{"items": []}'
+
+    assert captured["url"] == rd.DEEPSEEK_API_URL
+    assert captured["headers"]["Authorization"] == "Bearer test-key"
+    assert captured["json"]["model"] == "deepseek-chat"
+    assert captured["timeout"] == 30
+    assert captured["json"]["response_format"] == {"type": "json_object"}
+
+
+def test_call_llm_missing_key_raises_without_network(monkeypatch):
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+
+    def should_not_be_called(*args, **kwargs):
+        raise AssertionError("requests.post must not be called without an API key")
+
+    monkeypatch.setattr(rd.requests, "post", should_not_be_called)
+
+    with pytest.raises(rd.EditorialError, match="DEEPSEEK_API_KEY"):
+        rd._call_llm("prompt text", timeout=30)
+
+
+def test_call_llm_http_error_includes_api_message(monkeypatch):
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
+    monkeypatch.setattr(
+        rd.requests, "post",
+        lambda *args, **kwargs: _FakeHTTPResponse(
+            status_code=402, json_data={"error": {"message": "Insufficient Balance"}}
+        ),
+    )
+
+    with pytest.raises(rd.EditorialError, match="Insufficient Balance"):
+        rd._call_llm("prompt text", timeout=30)
+
+
+def test_call_llm_request_exception_raises(monkeypatch):
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
+
+    def fake_post(*args, **kwargs):
+        raise requests.ConnectionError("boom")
+
+    monkeypatch.setattr(rd.requests, "post", fake_post)
+
+    with pytest.raises(rd.EditorialError, match="request failed"):
+        rd._call_llm("prompt text", timeout=30)
+
+
+def test_call_llm_missing_content_field_raises(monkeypatch):
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
+    monkeypatch.setattr(
+        rd.requests, "post",
+        lambda *args, **kwargs: _FakeHTTPResponse(json_data={"choices": [{"message": {}}]}),
+    )
+
+    with pytest.raises(rd.EditorialError, match="missing choices"):
+        rd._call_llm("prompt text", timeout=30)
 
 
 # ---------------------------------------------------------------------------

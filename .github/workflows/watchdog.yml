@@ -82,7 +82,7 @@ jobs:
           echo "Most recent state/ commit is ${AGE_HOURS}h old (threshold: ${THRESHOLD_HOURS}h)."
 
           if [ "$AGE_HOURS" -ge "$THRESHOLD_HOURS" ]; then
-            echo "::error::state/ has not been updated in ${AGE_HOURS}h (>= ${THRESHOLD_HOURS}h threshold). The daily digest pipeline appears to have stopped completing. Check, in order: (1) the Routine's run list at claude.ai/code/routines, (2) Telegram bot/chat credentials (TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID), (3) recent runs of .github/workflows/digest.yml, (4) /status for Claude usage-limit exhaustion. See README.md's 'no digest by 9 AM MYT' checklist for the full runbook."
+            echo "::error::state/ has not been updated in ${AGE_HOURS}h (>= ${THRESHOLD_HOURS}h threshold). The daily digest pipeline appears to have stopped completing. Check, in order: (1) recent runs of .github/workflows/digest.yml (is the scheduled cron run failing?), (2) Telegram bot/chat credentials (TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID), (3) the DeepSeek API key (DEEPSEEK_API_KEY repo secret -- rotated, revoked, or balance exhausted?), (4) the Actions failure notification sent to Telegram. See README.md's 'no digest by 9 AM MYT' checklist for the full runbook."
             exit 1
           fi
 
