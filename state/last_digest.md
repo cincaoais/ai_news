@@ -1,14 +1,15 @@
 ---
-date: "2026-08-08"
+date: "2026-08-09"
 profile: finance_metals
 ---
 
-# Digest 2026-08-08 (finance_metals)
+# Digest 2026-08-09 (finance_metals)
 
-- U.S. Employment Shock Lifts S&P 500 to All-Time High - 조선일보
-- Trump renews effort to fire Fed governor Lisa Cook after Supreme Court ruling - The Washington Post
-- Gold's biggest headwind may finally be peaking - KITCO
-- Wall Street, Main Street solidly bullish as prices end the week nearly $300 higher - KITCO
-- S&P 500 closes at record high as employers cut 23,000 jobs - The Telegraph
-- Two-day strike begins at BHP’s Port Hedland iron ore operations - KITCO
-- Trump renews effort to fire Fed's Cook, continuing attacks on central bank - Reuters
+- Gold Price Forecast: Cooling Fed Rate Hike Expectations Boost Appeal as Price May Hit $4,500? - TradingKey
+- Wall Street Faces Inflation Crucible After Record Highs: July CPI Above Forecasts Could Spark Sell-Off - finance.biggo.com
+- China adds 20 tonnes of gold in July, largest purchase since 2023 - Crypto Briefing
+- Trump renews push to oust Federal Reserve governor Lisa Cook - Northeast Times
+- Silver & Gold Stocks Up 20+ Percent On the Week - SilverSeek
+- Gold Goes for Break – XAU/USD Massive Move Following $4k Support Build - FOREX.com
+- 10-Year Treasury Yield Hits 4%U.S. Borrowing Benchmark Has Climbed At Its Fastest Pace Arbitro (n9QLWbmgEm) - Mshale
+- Polymarket Traders See 63% Chance Fed Holds Interest Rates Steady - hokanews.com
