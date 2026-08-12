@@ -1,14 +1,14 @@
 ---
-date: "2026-08-11"
+date: "2026-08-12"
 profile: finance_metals
 ---
 
-# Digest 2026-08-11 (finance_metals)
+# Digest 2026-08-12 (finance_metals)
 
-- Gold prices extend big weekly advance, hit their highest levels in over two months - Investing.com
-- Gold and silver rise as oil jump revives inflation-risk trade - Kitco PM Report - KITCO
-- Wall Street ends down as expectations of Hormuz deal fade - Reuters
-- Trump Administration Moves Ahead with Efforts to Fire Federal Reserve Governor Lisa Cook - inddist.com
-- Trump says he spoke recently to Fed Chairman Warsh, denies regular calls
-- Barrick says Newmont deal clears path for North American IPO - Reuters
-- Nvidia lines up $500 billion in financing as CEO Jensen Huang tells CNBC his chips are ‘investable asset’
+- Wall Street ends down as US-Iran peace optimism fades - Reuters
+- Gold holds near two-month high as equities slip, oil rallies - Kitco PM Report - KITCO
+- S&P500, Nasdaq, Dow Futures Rangebound As Investors Await Key Inflation Data To Judge Rate Hike Possibilities — ORCL, AAPL, NVDA, CURLF In Focus - TradingView
+- Trump Targets Fed Governor Cook Amid Rate Hike Anxiety - Whalesbook
+- Fewer Fed meetings under Kevin Warsh? What a reduced FOMC calendar could mean for investors - chase.com
+- Why Jensen Huang’s $500 billion AI financing plan faces a big risk from China
+- CoreWeave stock pops 14% as revenue doubles on accelerating AI infrastructure demand
