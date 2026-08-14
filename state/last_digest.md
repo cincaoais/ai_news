@@ -1,14 +1,14 @@
 ---
-date: "2026-08-13"
+date: "2026-08-14"
 profile: finance_metals
 ---
 
-# Digest 2026-08-13 (finance_metals)
+# Digest 2026-08-14 (finance_metals)
 
-- US consumer inflation mild in July, economy still not out of the woods - Reuters
-- Where gold price is headed next as Fed rate hike and inflation odds change direction
-- S&P 500 ends higher as CoreWeave results fuel AI optimism - Reuters
-- Cerebras stock plunges 14% after second earnings report following IPO
-- Asian Stocks Poised to Gain on Benign US Inflation: Markets Wrap - Bloomberg.com
-- Gold prices surge 1% toward 2-month high - Arab News
-- Japan wholesale inflation eases slightly to 7.2%, undershooting expectations
+- The foundation for the sustained rally in U.S. stocks: S&P 500 profit margins hit a record high of 16.9%, with gains broadening beyond tech giants as profit margins rose across 80% of industries. - Moomoo
+- S&P 500 notches record-high close as rate-hike worries ease - marketscreener.com
+- Gold drifts higher above $4,350 as softer US PPI data reduces September Fed hike bets - FXStreet
+- Reddit stock jumps on inclusion in S&P 500
+- S&P 500 Hits Record High 7,799 as Cool Inflation Data Lifts Rate-Cut Hopes - finance.yahoo.com
+- Gold rally faces test from inflation, oil prices - Bangkok Post
+- 3.4 Percent Is Not a Good Inflation Rate - National Review
