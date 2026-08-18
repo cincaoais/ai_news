@@ -1,14 +1,14 @@
 ---
-date: "2026-08-17"
+date: "2026-08-18"
 profile: finance_metals
 ---
 
-# Digest 2026-08-17 (finance_metals)
+# Digest 2026-08-18 (finance_metals)
 
-- Weekly column: Cool inflation data propels S&P to record highs while others lag - FXStreet
-- Monday Markets Outlook: Oil, Retail Data Take Focus as Futures Hold Steady - TechStock²
-- Fed Policy Silence Pushes Wall Street to Bet on Corporate Earnings as S&P 500 Profits Hit Five-Year High - finance.biggo.com
-- China’s energy strategy vindicated by Iran conflict: FT - Crypto Briefing
-- Oil edges higher as Middle East tensions return to focus - Seeking Alpha
-- Soft US Inflation and Jobs Data Keep Gold Price Supported, but $4,500 Is a Critical Test for XAU/USD - FXLeaders
-- Gold (XAUUSD) Price Forecast: Gold Price Rises as September Hike Odds Tumble - FXEmpire
+- Gold gains momentum above $4,400 as softer US data dampens Fed hike odds - Mitrade
+- Rate hikes may be a blunt tool, but they're all the Fed has to cool inflation - Reuters
+- Stock market today: Dow, S&P 500, Nasdaq fall, Oil price above $88 - Eurasia Business News
+- Wall Street indexes slip as oil prices rise, retail results awaited - Reuters
+- Gold Rallies Above $4,400 as US Dollar Weakens - CryptoRank
+- US stocks close lower as rising oil prices revive inflation concerns - Anadolu Ajansı
+- Dollar Slips As Fed Rate Hike Bets Cool, But Rising Oil Prices Limit Decline - Bitcoin World
