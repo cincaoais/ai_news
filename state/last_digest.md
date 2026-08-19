@@ -1,14 +1,15 @@
 ---
-date: "2026-08-18"
+date: "2026-08-19"
 profile: finance_metals
 ---
 
-# Digest 2026-08-18 (finance_metals)
+# Digest 2026-08-19 (finance_metals)
 
-- Gold gains momentum above $4,400 as softer US data dampens Fed hike odds - Mitrade
-- Rate hikes may be a blunt tool, but they're all the Fed has to cool inflation - Reuters
-- Stock market today: Dow, S&P 500, Nasdaq fall, Oil price above $88 - Eurasia Business News
-- Wall Street indexes slip as oil prices rise, retail results awaited - Reuters
-- Gold Rallies Above $4,400 as US Dollar Weakens - CryptoRank
-- US stocks close lower as rising oil prices revive inflation concerns - Anadolu Ajansı
-- Dollar Slips As Fed Rate Hike Bets Cool, But Rising Oil Prices Limit Decline - Bitcoin World
+- Gold steadies below $4,350 as surging yields offset support from Fed rate-hold bets - Mitrade
+- Gold Analysis: XAU/USD Remains Neutral Ahead of Fed Minutes - FOREX.com
+- Gold Price Forecast: XAU/USD Slips Below $4,400 As US Yields Rally - Bitcoin World
+- Overnight US Stocks | Global Bond Yields Surge; S&P 500 Falls for Third Consecutive Day; SanDisk (SNDK.US) Drops 9% - Moomoo
+- Asian Stocks Set for Losses as Bond Jitters Linger: Markets Wrap - Bloomberg.com
+- 30-year Treasury yield hits highest level since 2007 amid inflation concerns - Crypto Briefing
+- U.S. government debt yields are surging at a bad time. Here's what's behind the move
+- U.S. Tech Stocks Slip as Bond Yields Hit Decade Highs; Iran Truce Expires - WSJ
