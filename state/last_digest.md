@@ -1,15 +1,14 @@
 ---
-date: "2026-08-19"
+date: "2026-08-20"
 profile: finance_metals
 ---
 
-# Digest 2026-08-19 (finance_metals)
+# Digest 2026-08-20 (finance_metals)
 
-- Gold steadies below $4,350 as surging yields offset support from Fed rate-hold bets - Mitrade
-- Gold Analysis: XAU/USD Remains Neutral Ahead of Fed Minutes - FOREX.com
-- Gold Price Forecast: XAU/USD Slips Below $4,400 As US Yields Rally - Bitcoin World
-- Overnight US Stocks | Global Bond Yields Surge; S&P 500 Falls for Third Consecutive Day; SanDisk (SNDK.US) Drops 9% - Moomoo
-- Asian Stocks Set for Losses as Bond Jitters Linger: Markets Wrap - Bloomberg.com
-- 30-year Treasury yield hits highest level since 2007 amid inflation concerns - Crypto Briefing
-- U.S. government debt yields are surging at a bad time. Here's what's behind the move
-- U.S. Tech Stocks Slip as Bond Yields Hit Decade Highs; Iran Truce Expires - WSJ
+- Gold Soars More Than 3% to Top $4,500 as Treasury Buyback Plan Hammers Yields and Dollar - finance.biggo.com
+- U.S. government debt passes $40 trillion, more than doubling in a decade
+- Fed’s July minutes revealed growing concerns over elevated inflation - ft.com
+- Trump announces 'economic warfare' on Iran, threatens ‘tremendous’ consequences for its backers
+- Wall St rises as yields ease, Moderna lifts healthcare stocks - Reuters
+- Gold climbs above $4,500 as US Dollar, yields fall - FXStreet
+- Trump bemoans Fed interest rate policy, says U.S. should be paying much less
