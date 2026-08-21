@@ -1,14 +1,14 @@
 ---
-date: "2026-08-20"
+date: "2026-08-21"
 profile: finance_metals
 ---
 
-# Digest 2026-08-20 (finance_metals)
+# Digest 2026-08-21 (finance_metals)
 
-- Gold Soars More Than 3% to Top $4,500 as Treasury Buyback Plan Hammers Yields and Dollar - finance.biggo.com
-- U.S. government debt passes $40 trillion, more than doubling in a decade
-- Fed’s July minutes revealed growing concerns over elevated inflation - ft.com
-- Trump announces 'economic warfare' on Iran, threatens ‘tremendous’ consequences for its backers
-- Wall St rises as yields ease, Moderna lifts healthcare stocks - Reuters
-- Gold climbs above $4,500 as US Dollar, yields fall - FXStreet
-- Trump bemoans Fed interest rate policy, says U.S. should be paying much less
+- Fed minutes show September rate hike still on the table - Reuters
+- Fed officials tread carefully after Treasury's bond market intervention - Reuters
+- Gold wavers as bond yields rebound, oil jump fuels US inflation worries - The Business Times
+- Wall Street sinks as bond yields rise, Walmart results disappoint - Reuters
+- Gold could surpass $5,000 by next year, says Morgan Stanley - Eurasia Business News
+- Warsh faces Fed independence test as Bessent moves in on central bank's turf
+- S&P 500 Negative Gamma Signals Rising Market Risk - Mott Capital Management
