@@ -1,14 +1,13 @@
 ---
-date: "2026-08-22"
+date: "2026-08-23"
 profile: finance_metals
 ---
 
-# Digest 2026-08-22 (finance_metals)
+# Digest 2026-08-23 (finance_metals)
 
+- Gold price update morning of August 23rd: Forecast increase after breakthrough week - Laodong.vn
+- Gold outlook: XAU/USD enters key resistance zone ahead of CPI - FOREX.com
+- FTSE 100 ends week up thanks to strong private sector and soaring gold price - London Evening Standard
+- S&P 500 Futures Prediction: Index at 7,674 as Oil Hits $87.06, Nvidia Earnings, AI Spending and Rising Treasury Yields Shape Monday Outlook – Check Forecast & Key Things To Watch - The Sunday Guardian
+- Nvidia customers reportedly warned about AI-related price hikes
 - Wall St rises on the day but falls for the week; bond yields and Iran in focus - Reuters
-- Gold (XAU/USD) Price Forecast: Breakout Opens Path Toward $4,891 - FXEmpire
-- How Bessent’s Efforts to Calm Bond Market Set Gold Prices Ablaze - Barron's
-- Gold price rally continues as Jeff Currie says “wake up” to commodities - Mining.com.au
-- Gold Price Climbs to $4,620 as Safe-Haven Demand Returns Across Global Markets - CryptoRank
-- S&P 500 Posts First Weekly Loss Since July Amid US Warning to Iran - marketscreener.com
-- Ray Dalio says Bessent move is sign that a debt crisis is getting closer; recommends gold and bitcoin
