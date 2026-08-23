@@ -1,13 +1,14 @@
 ---
-date: "2026-08-23"
+date: "2026-08-24"
 profile: finance_metals
 ---
 
-# Digest 2026-08-23 (finance_metals)
+# Digest 2026-08-24 (finance_metals)
 
-- Gold price update morning of August 23rd: Forecast increase after breakthrough week - Laodong.vn
-- Gold outlook: XAU/USD enters key resistance zone ahead of CPI - FOREX.com
-- FTSE 100 ends week up thanks to strong private sector and soaring gold price - London Evening Standard
-- S&P 500 Futures Prediction: Index at 7,674 as Oil Hits $87.06, Nvidia Earnings, AI Spending and Rising Treasury Yields Shape Monday Outlook – Check Forecast & Key Things To Watch - The Sunday Guardian
-- Nvidia customers reportedly warned about AI-related price hikes
-- Wall St rises on the day but falls for the week; bond yields and Iran in focus - Reuters
+- Dow Jones Futures: Tariffs In Focus; Nvidia, Warsh Ahead
+- Gold Price Forecast: Can XAU/USD Make New Highs in 2026 as Support Holds and China Buying Escalates - FXLeaders
+- Gold prices increase by more than 5%, experts predict the upward momentum will not stop - Laodong.vn
+- Gold likely to pull back after recent rally - The Business Times
+- Treasury Secretary to announce Iran sanctions as Tehran dismisses economic warfare threat
+- Kevin Wash to Address First Jackson Hole on the 28th... Can He Calm Fed Credibility and Long-term Rate Jitters? - 아시아경제
+- What's bogging down the data center trade has nothing to do with demand
