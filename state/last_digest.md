@@ -1,15 +1,14 @@
 ---
-date: "2026-08-25"
+date: "2026-08-26"
 profile: finance_metals
 ---
 
-# Digest 2026-08-25 (finance_metals)
+# Digest 2026-08-26 (finance_metals)
 
-- Trump says U.S. will hike Canada auto tariffs to 50% as trade war escalates
-- XAU Price Analysis: Gold Price Stretches Rally as $4,886 Comes Into View - Brave New Coin
-- VanEck cuts gold bullion ETF fee - Money Management
-- Here's what Jim Cramer says stock investors need to know about the bond market
-- Hong Kong Gold futures contract reports physical delivery record as the city's role as a Gold hub grows - FXStreet
-- What to expect out of Fed Chair Kevin Warsh at Jackson Hole - WTMJ
-- S&P 500, Nasdaq End Lower On Chipmaker Weakness, While Traders Position For Nvidia Earnings This Week — AVGO, INTC, BE, NVDA, PSKY In Focus - Yahoo Finance
-- Agnico buys Quebec gold junior stake for $41M - Mining.com
+- Here's why markets are starting to care about the 2026 election 10 weeks out
+- Explainer: Jackson Hole's big question: who pays the government's bill? - Reuters
+- Fed Chairman Kevin Warsh Cut the Fed's Post-Meeting Statement From 341 Words to Just 130, Dropping All Mention of Future Rate Cuts. Does That Signal Higher-for-Longer Rates Are Here to Stay? - AOL.com
+- Gold Price Forecast, Prediction: BofA Sees $5,000 In 2027 As Bullion Surges - Exchange Rates UK
+- Richmond Fed Manufacturing Index Misses Forecasts In August, Signaling Slower Growth - Bitcoin World
+- Canada unveils retaliatory tariffs on about $20 billion of U.S. goods
+- Federal Reserve’s Barkin warns rising debt may deter investors from buying US bonds - Crypto Briefing
