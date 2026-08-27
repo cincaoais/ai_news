@@ -1,14 +1,14 @@
 ---
-date: "2026-08-26"
+date: "2026-08-27"
 profile: finance_metals
 ---
 
-# Digest 2026-08-26 (finance_metals)
+# Digest 2026-08-27 (finance_metals)
 
-- Here's why markets are starting to care about the 2026 election 10 weeks out
-- Explainer: Jackson Hole's big question: who pays the government's bill? - Reuters
-- Fed Chairman Kevin Warsh Cut the Fed's Post-Meeting Statement From 341 Words to Just 130, Dropping All Mention of Future Rate Cuts. Does That Signal Higher-for-Longer Rates Are Here to Stay? - AOL.com
-- Gold Price Forecast, Prediction: BofA Sees $5,000 In 2027 As Bullion Surges - Exchange Rates UK
-- Richmond Fed Manufacturing Index Misses Forecasts In August, Signaling Slower Growth - Bitcoin World
-- Canada unveils retaliatory tariffs on about $20 billion of U.S. goods
-- Federal Reserve’s Barkin warns rising debt may deter investors from buying US bonds - Crypto Briefing
+- Markets want answers: Cryptic Fed chair Warsh faces make-or-break Jackson Hole speech - Malay Mail
+- Gold scales higher on softer US yields as traders await Fed Chair Warsh's speech - FXStreet
+- Tanker attack tests Trump’s claim that Hormuz is a 'functioning strait'
+- Bank of Korea delivers back-to-back rate hikes as core inflation stays elevated
+- China industrial profits growth cools to slowest in seven months as economic slowdown deepens
+- Central Banks Bought Record Gold in Q2 as Prices Fell, Then Surged in August - Startup Fortune
+- US says Chinese hackers broke into Justice Department, NASA, Federal Reserve, Senate - The Korea Herald
