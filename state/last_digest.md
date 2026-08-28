@@ -1,14 +1,13 @@
 ---
-date: "2026-08-27"
+date: "2026-08-28"
 profile: finance_metals
 ---
 
-# Digest 2026-08-27 (finance_metals)
+# Digest 2026-08-28 (finance_metals)
 
-- Markets want answers: Cryptic Fed chair Warsh faces make-or-break Jackson Hole speech - Malay Mail
-- Gold scales higher on softer US yields as traders await Fed Chair Warsh's speech - FXStreet
-- Tanker attack tests Trump’s claim that Hormuz is a 'functioning strait'
-- Bank of Korea delivers back-to-back rate hikes as core inflation stays elevated
-- China industrial profits growth cools to slowest in seven months as economic slowdown deepens
-- Central Banks Bought Record Gold in Q2 as Prices Fell, Then Surged in August - Startup Fortune
-- US says Chinese hackers broke into Justice Department, NASA, Federal Reserve, Senate - The Korea Herald
+- Will Warsh's Jackson Hole speech be a course correction or detour? - Reuters
+- Gold slumps below $4,600 as attention turns to Jackson Hole Symposium - FXStreet
+- Alphabet loses $700b in market value as AI questions rise - chinadailyasia.com
+- Ex-RBI Chief Rajan Says Fed Should Raise Rates to Curb Inflation - Bloomberg
+- Six months into the Iran war: Markets become accustomed to stalemate with no end in sight
+- Jefferies Sees 'Gold Wealth Effect' Boosting India Growth; Adds Manappuram, HZL, Meesho To Model Portfolio - NDTV Profit
