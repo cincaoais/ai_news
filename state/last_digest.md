@@ -1,13 +1,13 @@
 ---
-date: "2026-08-28"
+date: "2026-08-29"
 profile: finance_metals
 ---
 
-# Digest 2026-08-28 (finance_metals)
+# Digest 2026-08-29 (finance_metals)
 
-- Will Warsh's Jackson Hole speech be a course correction or detour? - Reuters
-- Gold slumps below $4,600 as attention turns to Jackson Hole Symposium - FXStreet
-- Alphabet loses $700b in market value as AI questions rise - chinadailyasia.com
-- Ex-RBI Chief Rajan Says Fed Should Raise Rates to Curb Inflation - Bloomberg
-- Six months into the Iran war: Markets become accustomed to stalemate with no end in sight
-- Jefferies Sees 'Gold Wealth Effect' Boosting India Growth; Adds Manappuram, HZL, Meesho To Model Portfolio - NDTV Profit
+- Gold price falls more than $147/ounce after tough signal from Fed - Laodong.vn
+- Fed chair Warsh, concerned about inflation, says bank may have ‘work to do’ - The Washington Post
+- S&P, Nasdaq end lower after Fed Chair Warsh reaffirms inflation fight - Reuters
+- Odds of higher interest rates soar after Fed Chair Warsh's remarks - KATV
+- Trump announces deal with Venezuela to secure more than 65 billion barrels of oil reserves
+- Gold, silver prices today: Bullion outlook remains bullish; silver looks cheaper than gold - Business Today
