@@ -1,14 +1,14 @@
 ---
-date: "2026-09-01"
+date: "2026-09-02"
 profile: finance_metals
 ---
 
-# Digest 2026-09-01 (finance_metals)
+# Digest 2026-09-02 (finance_metals)
 
-- Tanker struck in Hormuz, raising worries over escalation, as Trump vows to hit Iran 'hard'
-- Wall Street Highlights: S&P 500 Slips As Oil Spike, Rising Fed Rate Bets Pressure Stocks - NDTV Profit
-- Ringgit opens lower amid elevated US treasury yields - KLSE Screener
-- Frenkel: Warsh Signals “Back to Basics,” Stresses Price Stability Key to Reaching All Fed Goals - Kathleen Hays Presents: Central Bank Central
-- Gold edges lower below $4,450 as Middle East tensions add inflation pressure - FXStreet
-- Gold Price Technical Shift: 200-Day MA Support Breached - The Globe and Mail
-- The S&P 500 usually falls in September. Why this year should be different. - MarketWatch
+- U.S. completes fresh strikes on Iran as Mideast tensions flare again
+- 🛢️📉 U.S. stocks open September lower on inflation, oil-driven yield spike - moomoo.com
+- Higher yields and firm dollar push gold to two-week low - Nation Thailand
+- Fed rate hike odds hit 72% as Barr warns on inflation - Cryptonews.net
+- Wall Street ends lower as higher yields, rising oil prices mark shaky start to September - Reuters
+- Ringgit opens lower vs greenback amid higher oil prices, Fed rate hike bets - The Malaysian Reserve
+- Dip buyers coming in: Schroders turns more bullish on gold citing central bank buying - investingLive
