@@ -1,14 +1,14 @@
 ---
-date: "2026-09-02"
+date: "2026-09-03"
 profile: finance_metals
 ---
 
-# Digest 2026-09-02 (finance_metals)
+# Digest 2026-09-03 (finance_metals)
 
-- U.S. completes fresh strikes on Iran as Mideast tensions flare again
-- 🛢️📉 U.S. stocks open September lower on inflation, oil-driven yield spike - moomoo.com
-- Higher yields and firm dollar push gold to two-week low - Nation Thailand
-- Fed rate hike odds hit 72% as Barr warns on inflation - Cryptonews.net
-- Wall Street ends lower as higher yields, rising oil prices mark shaky start to September - Reuters
-- Ringgit opens lower vs greenback amid higher oil prices, Fed rate hike bets - The Malaysian Reserve
-- Dip buyers coming in: Schroders turns more bullish on gold citing central bank buying - investingLive
+- Dutch central bank moves 86 tonnes of gold to UK from US and Canada, citing ‘geopolitical unrest’ - theguardian.com
+- Schroders turns bullish on gold as debt, inflation and currency risks outweigh elevated real yields - kitco.com
+- Gold Holds 200-Day EMA, Futures and Options Hint at ‘Dip-Buying Mentality’ - FOREX.com
+- Fed Beige Book Cites Energy and Tariff Costs as Price Pressures - Seoul Economic Daily
+- US Fed says ‘positive’ economic outlook facing heightened uncertainty - The Straits Times
+- Bank of Canada Flags Inflation Risk, Lifting Rate-Hike Wagers - Bloomberg.com
+- Broadcom delivers strong earnings view as CEO touts growth with AI labs
