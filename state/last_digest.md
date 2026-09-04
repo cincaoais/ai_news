@@ -1,14 +1,14 @@
 ---
-date: "2026-09-03"
+date: "2026-09-04"
 profile: finance_metals
 ---
 
-# Digest 2026-09-03 (finance_metals)
+# Digest 2026-09-04 (finance_metals)
 
-- Dutch central bank moves 86 tonnes of gold to UK from US and Canada, citing ‘geopolitical unrest’ - theguardian.com
-- Schroders turns bullish on gold as debt, inflation and currency risks outweigh elevated real yields - kitco.com
-- Gold Holds 200-Day EMA, Futures and Options Hint at ‘Dip-Buying Mentality’ - FOREX.com
-- Fed Beige Book Cites Energy and Tariff Costs as Price Pressures - Seoul Economic Daily
-- US Fed says ‘positive’ economic outlook facing heightened uncertainty - The Straits Times
-- Bank of Canada Flags Inflation Risk, Lifting Rate-Hike Wagers - Bloomberg.com
-- Broadcom delivers strong earnings view as CEO touts growth with AI labs
+- Wall Street ends sharply higher as Waller remarks ease rate hike fears - Reuters
+- Gold rebounds above $4,450 as Waller tempers Fed rate hike bets ahead US jobs data - FXStreet
+- The Federal Reserve's "internal debate" goes public, with Waller refuting Walsh's approach to weakening forward guidance - 富途牛牛
+- US Fed’s Waller says safety premium for Treasuries is gone, pushing neutral rate higher - The Business Times
+- French Central Bank Clears New York Fed Gold and Stores All in Paris - ababnews.com
+- Asia Stocks to Gain as Fed Bets Cool, Dollar Drops: Markets Wrap - Bloomberg.com
+- Gold price jumps 3% as Fed rate hike bets ease - Mining.com.au
