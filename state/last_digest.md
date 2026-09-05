@@ -1,14 +1,13 @@
 ---
-date: "2026-09-04"
+date: "2026-09-05"
 profile: finance_metals
 ---
 
-# Digest 2026-09-04 (finance_metals)
+# Digest 2026-09-05 (finance_metals)
 
-- Wall Street ends sharply higher as Waller remarks ease rate hike fears - Reuters
-- Gold rebounds above $4,450 as Waller tempers Fed rate hike bets ahead US jobs data - FXStreet
-- The Federal Reserve's "internal debate" goes public, with Waller refuting Walsh's approach to weakening forward guidance - 富途牛牛
-- US Fed’s Waller says safety premium for Treasuries is gone, pushing neutral rate higher - The Business Times
-- French Central Bank Clears New York Fed Gold and Stores All in Paris - ababnews.com
-- Asia Stocks to Gain as Fed Bets Cool, Dollar Drops: Markets Wrap - Bloomberg.com
-- Gold price jumps 3% as Fed rate hike bets ease - Mining.com.au
+- Gold price heads for weekly loss after strong US jobs report - Mining.com.au
+- Wall Street ends lower as solid jobs data fuels hawkish Fed bets - Honolulu Star-Advertiser
+- Citigroup delays Fed rate-cut forecast to 2027 after strong U.S. jobs report - Reuters
+- Strong job gains signal Fed hike as Trump levels new rate-cut demand - Reuters
+- Bloom Energy, Illumina, Everpure to Join S&P 500 in September Rebalance - finance.biggo.com
+- AI Energy Play Bloom Energy Jumps On S&P 500 News - Investor's Business Daily
