@@ -1,13 +1,14 @@
 ---
-date: "2026-09-05"
+date: "2026-09-06"
 profile: finance_metals
 ---
 
-# Digest 2026-09-05 (finance_metals)
+# Digest 2026-09-06 (finance_metals)
 
-- Gold price heads for weekly loss after strong US jobs report - Mining.com.au
-- Wall Street ends lower as solid jobs data fuels hawkish Fed bets - Honolulu Star-Advertiser
-- Citigroup delays Fed rate-cut forecast to 2027 after strong U.S. jobs report - Reuters
-- Strong job gains signal Fed hike as Trump levels new rate-cut demand - Reuters
-- Bloom Energy, Illumina, Everpure to Join S&P 500 in September Rebalance - finance.biggo.com
-- AI Energy Play Bloom Energy Jumps On S&P 500 News - Investor's Business Daily
+- Trump turns up the heat on Warsh as Fed rate hike looms
+- S&P 500, Dow End Lower As Blowout Jobs Report Fans Rate Hike Fears, While Chipmaker Strength Aids Nasdaq —TSLA, NFLX, BE, NVDA In Focus - Stocktwits
+- Gold dips 3 pc on weekly basis over hopes of US Fed rate hike - Social News XYZ
+- Gold prices today, September 6th: SJC gold price drops sharply, global gold prices await US CPI figures. - Vietnam.vn
+- Gold Price Forecast: XAU/USD Two-Week Plunge Puts August Breakout to the Test - FOREX.com
+- S&P 500 Today: Broad Market Trims August Gains as Iran Strikes Rattle Wall Street - BBN Times
+- Buffett’s Casino Warning Has Investors Rethinking Broad Market Stock Exposure - simplywall.st
