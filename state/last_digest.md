@@ -1,14 +1,14 @@
 ---
-date: "2026-09-06"
+date: "2026-09-07"
 profile: finance_metals
 ---
 
-# Digest 2026-09-06 (finance_metals)
+# Digest 2026-09-07 (finance_metals)
 
-- Trump turns up the heat on Warsh as Fed rate hike looms
-- S&P 500, Dow End Lower As Blowout Jobs Report Fans Rate Hike Fears, While Chipmaker Strength Aids Nasdaq —TSLA, NFLX, BE, NVDA In Focus - Stocktwits
-- Gold dips 3 pc on weekly basis over hopes of US Fed rate hike - Social News XYZ
-- Gold prices today, September 6th: SJC gold price drops sharply, global gold prices await US CPI figures. - Vietnam.vn
-- Gold Price Forecast: XAU/USD Two-Week Plunge Puts August Breakout to the Test - FOREX.com
-- S&P 500 Today: Broad Market Trims August Gains as Iran Strikes Rattle Wall Street - BBN Times
-- Buffett’s Casino Warning Has Investors Rethinking Broad Market Stock Exposure - simplywall.st
+- Bitcoin drops below $80,000 as hot jobs data spurs US Federal Reserve hike bets - The Straits Times
+- Japan’s August foreign reserves post largest-ever drop after record intervention - The Mighty 790 KFGO
+- Gold prices rise - VnExpress International
+- US Fed Reserve may raise rates after stronger-than-expected jobs report - news24.com.au
+- S&P 500 weekly outlook: CPI, US-Iran Situation and Yields in focus - FOREX.com
+- Gold upside remains limited by Fed rate hike risks and Iran war; traders await US CPI for next direction - investingLive
+- Gold prices rebound from near four-week low to above $4,400 again, what are the technicals saying? - investingLive
