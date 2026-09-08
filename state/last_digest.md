@@ -1,14 +1,14 @@
 ---
-date: "2026-09-07"
+date: "2026-09-08"
 profile: finance_metals
 ---
 
-# Digest 2026-09-07 (finance_metals)
+# Digest 2026-09-08 (finance_metals)
 
-- Bitcoin drops below $80,000 as hot jobs data spurs US Federal Reserve hike bets - The Straits Times
-- Japan’s August foreign reserves post largest-ever drop after record intervention - The Mighty 790 KFGO
-- Gold prices rise - VnExpress International
-- US Fed Reserve may raise rates after stronger-than-expected jobs report - news24.com.au
-- S&P 500 weekly outlook: CPI, US-Iran Situation and Yields in focus - FOREX.com
-- Gold upside remains limited by Fed rate hike risks and Iran war; traders await US CPI for next direction - investingLive
-- Gold prices rebound from near four-week low to above $4,400 again, what are the technicals saying? - investingLive
+- Gold declines to near $4,400 as robust US jobs data lifts Fed hike odds - FXStreet
+- Gold Trades Near $4,410 as Markets Price 60% Odds of September Fed Rate Hike - Sahi
+- Gold Price Forecast: Rate Hike Risk Builds Ahead of US CPI - Forex Factory
+- Here are the 3 big things we're watching in this holiday-shortened trading week
+- China says it will pump $54 billion into banks and insurers — but their stocks still fell
+- S&P 500 Adds 3 Surging Stocks in Major Shake-Up - Yahoo Finance
+- UBS lifts long-term gold price, upgrades four ASX gold stocks - Market Index
