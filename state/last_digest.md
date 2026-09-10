@@ -1,14 +1,15 @@
 ---
-date: "2026-09-09"
+date: "2026-09-10"
 profile: finance_metals
 ---
 
-# Digest 2026-09-09 (finance_metals)
+# Digest 2026-09-10 (finance_metals)
 
-- U.S. military destroys five Iranian oil tankers after attempted attack on American warship, Centcom says
-- Brent crude nears $100 a barrel as U.S.-Iran tit-for-tat strikes stoke supply worries
-- Gold slides to $4,400 as rate-hike odds firm ahead of next week's Fed decision - KITCO
-- Gold slumps to near $4,350 amid oil-driven inflation fears, US inflation data in focus - FXStreet
-- S&P 500 falls as AI worries hit software makers - Reuters
-- Goldman: AI spending overtakes Fed in shaping interest rates - Crypto Briefing
-- Stock Market Today: Dow Drops 628 Points as Oil Nears $100 and Gold Slides - Eurasia Business News
+- S&P 500 ends down as oil tops $100 per barrel - Reuters
+- Trump pressures the Federal Reserve to cut interest rates to rescue the economy, yet markets are pricing in a 60% probability of a rate hike in September. - 富途牛牛
+- Gold rebounds above $4,400 on weaker Dollar, US PPI inflation data looms - Mitrade
+- Brent's Break Above $100 Lifts Gold's Haven Bid Ahead of Fed Decision - Crux Investor
+- Barclays Raises S&P 500 Target to 7,950—Why That’s Only 4.1% Upside - TechStock²
+- S&P 500, Dow, Nasdaq End Lower As Oil Crosses $101, Yields Pop Following Bessent’s Expanded Buyback Plan — AAPL, META, AMZN, CRM In Focus - Stocktwits
+- Push to Cut Fed's Rate-Setting Meetings From Eight to Six a Year Gains Traction, With Six Regional Chiefs on Board - finance.biggo.com
+- Yen Intervention Explained: What’s True, What’s Not and What Markets Should Watch - equiti.com
