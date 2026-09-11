@@ -1,15 +1,15 @@
 ---
-date: "2026-09-10"
+date: "2026-09-11"
 profile: finance_metals
 ---
 
-# Digest 2026-09-10 (finance_metals)
+# Digest 2026-09-11 (finance_metals)
 
-- S&P 500 ends down as oil tops $100 per barrel - Reuters
-- Trump pressures the Federal Reserve to cut interest rates to rescue the economy, yet markets are pricing in a 60% probability of a rate hike in September. - 富途牛牛
-- Gold rebounds above $4,400 on weaker Dollar, US PPI inflation data looms - Mitrade
-- Brent's Break Above $100 Lifts Gold's Haven Bid Ahead of Fed Decision - Crux Investor
-- Barclays Raises S&P 500 Target to 7,950—Why That’s Only 4.1% Upside - TechStock²
-- S&P 500, Dow, Nasdaq End Lower As Oil Crosses $101, Yields Pop Following Bessent’s Expanded Buyback Plan — AAPL, META, AMZN, CRM In Focus - Stocktwits
-- Push to Cut Fed's Rate-Setting Meetings From Eight to Six a Year Gains Traction, With Six Regional Chiefs on Board - finance.biggo.com
-- Yen Intervention Explained: What’s True, What’s Not and What Markets Should Watch - equiti.com
+- 10-year Treasury yield tops 4.9%, highest since 2023, as oil surge raises inflation fears
+- Gold falls below $4,350 as rising oil prices, US PPI reinforces Fed hike bets - Mitrade
+- The Fed Was Supposed to Hold Next Week. One Inflation Report Just Put a Hike Back in Play. - thewealthadvisor.com
+- Bessent says 'a large bank' will be sanctioned on Monday as part of Iran strategy
+- Futures: S&P 500 Breaks 50-Day As Oil, Yields Soar; CPI Inflation Due - Investor's Business Daily
+- US Debt Above $40 Trillion Strengthens Gold's Case as a Hedge - cruxinvestor.com
+- What’s Really Driving China’s 22-Month Gold Buying Spree at Record Prices - nai500.com
+- US 30-year mortgage rate reaches 14-month high - Crypto Briefing
