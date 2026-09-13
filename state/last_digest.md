@@ -1,15 +1,15 @@
 ---
-date: "2026-09-12"
+date: "2026-09-13"
 profile: finance_metals
 ---
 
-# Digest 2026-09-12 (finance_metals)
+# Digest 2026-09-13 (finance_metals)
 
-- S&P 500 ends higher as strong inflation data cements rate-hike bets - Reuters
-- Wall St Week Ahead Investors brace for possible rate hike at uncertain Fed meeting - Reuters
-- Dow Jones Futures: $100 Oil, Surging Yields Pressure Stocks With Fed Rate Hike Seen. Apple, Moderna Are New Buys. - Investor's Business Daily
-- Will Gold Price Fall Below $4,000 Amid Renewed Economic Risks? - BeInCrypto
-- Saudi Arabia shut down East-West crude oil pipeline after multiple attacks by drones from Iraq
-- Cramer’s week ahead: Falling oil could help stocks but Fed is the next big test
-- The Fed could raise interest rates three times. Here’s where the market could face the stiffest test. - MarketWatch
-- US Stock Market Movement | Gold Stocks Rise at Market Open, Harmony Gold (HMY.US) Up Over 3% - Bitget
+- All Eyes on Warsh as Rate-Hike Fever Spreads Across G7 Central Banks - Bloomberg.com
+- US-Iran tensions add another layer of volatility to gold as oil prices complicate Fed outlook - Business Today
+- Gold Rebounds Toward $4,400 Before a Fed Decision Priced for a Hike - TechStock²
+- Dollar Gains Against Euro, Franc as US Inflation Fuels Fed Rate-Hike Bets - Sada Elbalad english
+- S&P 500, Dow, Nasdaq End Lower As Surging Oil Raises Odds For A September Rate Hike — ORCL, ADBE, M, NVDA, UBER In Focus - Stocktwits
+- S&P 500, Nasdaq, Dow Futures Edge Higher Ahead Of Fed Rate Decision: INTC, SNAP, SOFI, RUM In Focus - Stocktwits
+- S&P 500 Weekly Review: Benchmark Slips 0.8% to 7,657 as Health Care and Materials Weigh on Wall Street - BBN Times
+- OpenAI rules out IPO this year as Altman, Musk & Amodei warn AI is moving too fast
