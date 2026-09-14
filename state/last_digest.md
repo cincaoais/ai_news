@@ -1,15 +1,15 @@
 ---
-date: "2026-09-13"
+date: "2026-09-14"
 profile: finance_metals
 ---
 
-# Digest 2026-09-13 (finance_metals)
+# Digest 2026-09-14 (finance_metals)
 
-- All Eyes on Warsh as Rate-Hike Fever Spreads Across G7 Central Banks - Bloomberg.com
-- US-Iran tensions add another layer of volatility to gold as oil prices complicate Fed outlook - Business Today
-- Gold Rebounds Toward $4,400 Before a Fed Decision Priced for a Hike - TechStock²
-- Dollar Gains Against Euro, Franc as US Inflation Fuels Fed Rate-Hike Bets - Sada Elbalad english
-- S&P 500, Dow, Nasdaq End Lower As Surging Oil Raises Odds For A September Rate Hike — ORCL, ADBE, M, NVDA, UBER In Focus - Stocktwits
-- S&P 500, Nasdaq, Dow Futures Edge Higher Ahead Of Fed Rate Decision: INTC, SNAP, SOFI, RUM In Focus - Stocktwits
-- S&P 500 Weekly Review: Benchmark Slips 0.8% to 7,657 as Health Care and Materials Weigh on Wall Street - BBN Times
-- OpenAI rules out IPO this year as Altman, Musk & Amodei warn AI is moving too fast
+- Gold slips as hotter US inflation lifts Fed hike bets, oil stokes price pressures - Investing.com
+- The 10-year Treasury is closing in on 5%. How it gets there matters more
+- Malaysia Morning Wrap | KLSE Falls to Eight-Week Low on Rate Hike Fears - Moomoo
+- The Week Ahead: US Federal Reserve, Bank of Japan, UK inflation - CMC Markets
+- Trump Urges Federal Reserve To Cut Rates As Market Bets On Warsh Hike - Investor's Business Daily
+- Global managers and South Korea boost gold ETF bets amid geopolitics - CHOSUNBIZ - Chosunbiz
+- Silver bulls look to gold as solar demand loses shine - agbi.com
+- Bitcoin Faces 87% Fed Hike Odds Wednesday: Will Treasury Save the Rally? - BeInCrypto
